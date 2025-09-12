@@ -10,7 +10,13 @@
     "lint": "eslint src/**/*.ts",
     "test": "jest"
   },
-  "keywords": ["chat", "websocket", "socket.io", "typescript", "real-time"],
+  "keywords": [
+    "chat",
+    "websocket",
+    "socket.io",
+    "typescript",
+    "real-time"
+  ],
   "author": "Eduardo",
   "license": "MIT",
   "devDependencies": {
@@ -20,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.56.0",
+    "socket.io-client": "^4.8.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   },
