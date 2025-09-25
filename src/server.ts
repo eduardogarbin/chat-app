@@ -5,26 +5,24 @@ import cors from 'cors';
 import path from 'path';
 
 // Importando os tipos que criamos
-import { User } from './types/user';
 import { ClientToServerEvents, ServerToClientEvents } from './types/socket-events';
+import { userService } from './services/userService';
+import { messageService } from './services/messageService';
 
 const app = express();
 const httpServer = createServer(app);
 
 // Tipando o servidor Socket.IO para termos autocomplete e segurança de tipos
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
 });
 
 const PORT = process.env.PORT || 3000;
 
-// --- Armazenamento em Memória ---
-// Uma lista simples para guardar os usuários conectados.
-// A chave é o socket.id e o valor é o objeto User.
-const users = new Map<string, User>();
+// --- Configuração do servidor ---
 
 // Middlewares
 app.use(cors());
@@ -33,61 +31,82 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Rota de teste
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    message: 'Chat server is running!',
-    timestamp: new Date().toISOString()
-  });
+    res.json({
+        status: 'OK',
+        message: 'Chat server is running!',
+        timestamp: new Date().toISOString()
+    });
 });
 
 // --- Lógica do Socket.IO ---
 io.on('connection', (socket) => {
-  console.log(`Novo usuário conectado: ${socket.id}`);
+    console.log(`Novo usuário conectado: ${socket.id}`);
 
-  // Passo 1: O servidor agora espera o cliente se identificar.
-  // O evento 'joinRoom' agora serve para "logar" no chat.
-  socket.on('joinRoom', (username) => {
-    console.log(`Usuário ${username} (${socket.id}) entrou no chat.`);
+    // Passo 1: O servidor agora espera o cliente se identificar.
+    // O evento 'joinRoom' agora serve para "logar" no chat.
+    socket.on('joinRoom', (username) => {
+        console.log(`Usuário ${username} (${socket.id}) entrou no chat.`);
 
-    // Cria e armazena o novo usuário
-    const user: User = {
-      id: socket.id,
-      username,
-      joinedAt: new Date()
-    };
-    users.set(socket.id, user);
+        // Cria e armazena o novo usuário
+        const user = userService.addUser(socket.id, username);
 
-    // Informa o cliente que ele conectou com sucesso
-    socket.emit('message', {
-      id: new Date().getTime().toString(),
-      userId: 'system',
-      username: 'Sistema',
-      content: `Bem-vindo, ${username}!`,
-      timestamp: new Date(),
+        // Informa o cliente que ele conectou com sucesso
+        socket.emit('message', {
+            id: new Date().getTime().toString(),
+            userId: 'system',
+            username: 'Sistema',
+            content: `Bem-vindo, ${username}!`,
+            timestamp: new Date(),
+        });
+
+        // Informa os outros usuários que alguém novo entrou
+        socket.broadcast.emit('userJoined', user);
+
+        // Atualiza a lista de usuários para todos os clientes
+        io.emit('roomUsers', userService.getAllUsers());
     });
 
-    // Informa os outros usuários que alguém novo entrou
-    socket.broadcast.emit('userJoined', user);
+    // Passo 2: Handling de envio de mensagens
+    socket.on('sendMessage', (content) => {
+        const user = userService.getUser(socket.id);
 
-    // Atualiza a lista de usuários para todos os clientes
-    io.emit('roomUsers', Array.from(users.values()));
-  });
+        // Validações básicas
+        if (!user) {
+            socket.emit('error', 'Usuário não está conectado');
+            return;
+        }
 
-  // Passo 2: Quando um usuário desconecta, removemos ele da lista
-  socket.on('disconnect', () => {
-    const user = users.get(socket.id);
-    if (user) {
-      console.log(`Usuário desconectado: ${user.username} (${socket.id})`);
-      users.delete(socket.id);
+        // Validar conteúdo da mensagem
+        const validation = messageService.validateContent(content);
+        if (!validation.valid) {
+            socket.emit('error', validation.error!);
+            return;
+        }
 
-      // Informa a todos que o usuário saiu e atualiza a lista
-      io.emit('userLeft', user);
-      io.emit('roomUsers', Array.from(users.values()));
-    }
-  });
+        // Criar e armazenar a mensagem
+        const message = messageService.createMessage(user.id, user.username, content);
+        messageService.addMessage(message);
+
+        console.log(`Mensagem de ${user.username}: ${content}`);
+
+        // Enviar mensagem para todos os usuários conectados
+        io.emit('message', message);
+    });
+
+    // Passo 3: Quando um usuário desconecta, removemos ele da lista
+    socket.on('disconnect', () => {
+        const user = userService.removeUser(socket.id);
+        if (user) {
+            console.log(`Usuário desconectado: ${user.username} (${socket.id})`);
+
+            // Informa a todos que o usuário saiu e atualiza a lista
+            io.emit('userLeft', user);
+            io.emit('roomUsers', userService.getAllUsers());
+        }
+    });
 });
 
 httpServer.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`Socket.IO ativo e pronto para conexões`);
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Socket.IO ativo e pronto para conexões`);
 });

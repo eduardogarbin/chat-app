@@ -17,7 +17,7 @@
     "typescript",
     "real-time"
   ],
-  "author": "Eduardo",
+  "author": "Eduardo Alberti Garbin",
   "license": "MIT",
   "devDependencies": {
     "@types/cors": "^2.8.17",

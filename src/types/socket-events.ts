@@ -27,8 +27,8 @@ export interface ClientToServerEvents {
   // Enviar mensagem
   sendMessage: (content: string) => void;
 
-  // Entrar em uma sala
-  joinRoom: (roomName: string, username: string) => void;
+  // Entrar no chat com username
+  joinRoom: (username: string) => void;
 
   // Sair da sala atual
   leaveRoom: () => void;
