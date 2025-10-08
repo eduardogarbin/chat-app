@@ -1,38 +1,68 @@
 # Chat App - Real-time Messaging
 
-Uma aplicação de chat em tempo real construída com **Node.js**, **TypeScript** e **Socket.IO**.
+Uma aplicação de chat em tempo real com backend Node.js + Socket.IO e frontend React + TypeScript.
 
-## Tecnologias
-
-- **Node.js** - Runtime JavaScript
-- **TypeScript** - Tipagem estática
-- **Express.js** - Framework web
-- **Socket.IO** - WebSockets para tempo real
-- **ESLint** - Linting de código
-
-## Estrutura do Projeto
+## Estrutura do Projeto (Monorepo)
 
 ```
 chat-app/
-├── src/
-│   ├── server.ts              # Servidor principal com Express + Socket.IO
-│   └── types/                 # Definições TypeScript
-│       ├── index.ts           # Re-exports centralizados
-│       ├── user.ts            # Interface User
-│       ├── message.ts         # Interface Message
-│       ├── room.ts            # Interface Room (preparado)
-│       └── socket-events.ts   # Eventos Socket.IO tipados
-├── public/                    # Arquivos estáticos (preparado)
-├── tests/                     # Testes automatizados (preparado)
-├── test-client.ts             # Cliente de teste automatizado
-├── DESENVOLVIMENTO.md         # Documentação técnica detalhada
-└── dist/                      # Arquivos compilados (gerado)
+├── server/                    # Backend (Node.js + Socket.IO)
+│   ├── src/
+│   │   ├── server.ts          # Servidor principal
+│   │   ├── controllers/       # Controladores
+│   │   ├── handlers/          # Handlers de eventos
+│   │   ├── middlewares/       # Middlewares
+│   │   ├── models/            # Modelos de dados
+│   │   ├── routes/            # Rotas da API
+│   │   ├── services/          # Serviços e lógica de negócio
+│   │   ├── types/             # Definições TypeScript
+│   │   └── utils/             # Utilitários
+│   ├── tests/                 # Testes do backend
+│   ├── dist/                  # Build do backend
+│   └── package.json
+│
+├── client/                    # Frontend (React + Vite)
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── auth/          # Componentes de autenticação
+│   │   │   │   └── LoginScreen.tsx
+│   │   │   └── chat/          # Componentes do chat
+│   │   │       ├── ChatHeader.tsx
+│   │   │       ├── ChatInput.tsx
+│   │   │       ├── MessageList.tsx
+│   │   │       └── MessageItem.tsx
+│   │   ├── types/             # Tipos TypeScript
+│   │   │   └── message.ts
+│   │   ├── App.tsx            # Componente principal
+│   │   ├── main.tsx           # Entry point
+│   │   └── index.css          # Estilos globais
+│   ├── public/                # Arquivos estáticos
+│   └── package.json
+│
+├── .gitignore
+└── README.md                  # Este arquivo
 ```
 
-## Instalação e Uso
+## Tecnologias
+
+### Backend
+- **Node.js** - Runtime JavaScript
+- **TypeScript** - Tipagem estática
+- **Express.js** - Framework web
+- **Socket.IO** - WebSockets para comunicação em tempo real
+- **CORS** - Cross-Origin Resource Sharing
+
+### Frontend
+- **React 19** - Biblioteca UI
+- **TypeScript** - Tipagem estática
+- **Vite** - Build tool e dev server
+- **Tailwind CSS v4** - Framework CSS utilitário
+- **Framer Motion** - Animações
+- **Socket.IO Client** - Cliente WebSocket
+
+## Instalação e Execução
 
 ### Pré-requisitos
-
 - Node.js (v18 ou superior)
 - npm ou yarn
 
@@ -43,201 +73,98 @@ chat-app/
 git clone <repo-url>
 cd chat-app
 
-# Instale as dependências
+# Instalar dependências do backend
+cd server
 npm install
 
-# Execute em modo desenvolvimento
+# Instalar dependências do frontend
+cd ../client
+npm install
+```
+
+### Execução em Desenvolvimento
+
+```bash
+# Terminal 1: Backend
+cd server
 npm run dev
 
-# Build para produção
+# Terminal 2: Frontend
+cd client
+npm run dev
+```
+
+O servidor backend estará rodando em `http://localhost:3000`
+O frontend estará rodando em `http://localhost:5173`
+
+### Build para Produção
+
+```bash
+# Backend
+cd server
 npm run build
 npm start
-```
 
-## Endpoints
-
-### API REST
-
-- `GET /api/health` - Status do servidor
-
-### Socket.IO Events
-
-### **Cliente → Servidor**
-
-#### `joinRoom(username: string)`
-
-Usuário se identifica no chat com um nome de usuário.
-
-```javascript
-socket.emit("joinRoom", "MeuNome");
-```
-
-#### `sendMessage(content: string)`
-
-Envia uma mensagem para todos os usuários conectados.
-
-```javascript
-socket.emit("sendMessage", "Olá pessoal!");
-```
-
-#### `leaveRoom()` _(preparado)_
-
-Usuário sai da sala atual.
-
-```javascript
-socket.emit("leaveRoom");
-```
-
-### **Servidor → Cliente**
-
-#### `message(message: Message)`
-
-Nova mensagem recebida no chat.
-
-```javascript
-socket.on("message", (message) => {
-  console.log(`${message.username}: ${message.content}`);
-});
-```
-
-#### `userJoined(user: User)`
-
-Notificação de que um usuário entrou no chat.
-
-```javascript
-socket.on("userJoined", (user) => {
-  console.log(`${user.username} entrou no chat`);
-});
-```
-
-#### `userLeft(user: User)`
-
-Notificação de que um usuário saiu do chat.
-
-```javascript
-socket.on("userLeft", (user) => {
-  console.log(`${user.username} saiu do chat`);
-});
-```
-
-#### `roomUsers(users: User[])`
-
-Lista atualizada de todos os usuários online.
-
-```javascript
-socket.on("roomUsers", (users) => {
-  console.log(`Usuários online: ${users.length}`);
-});
-```
-
-#### `error(error: string)`
-
-Mensagem de erro do servidor.
-
-```javascript
-socket.on("error", (error) => {
-  console.error(`Erro: ${error}`);
-});
-```
-
-## Desenvolvimento
-
-```bash
-# Modo desenvolvimento (com hot reload)
-npm run dev
-
-# Linting
-npm run lint
-
-# Build
+# Frontend
+cd client
 npm run build
+npm run preview
 ```
 
-## Como Testar o Sistema
+## Funcionalidades
 
-### 1. Testando com o Cliente Automatizado
+### Implementadas ✅
+- Sistema de chat em tempo real
+- Entrada/saída de usuários com notificações
+- Tela de login com validação
+- Envio e recebimento de mensagens
+- Indicador de status de conexão
+- Interface responsiva com tema claro/escuro
+- Animações suaves
+- Auto-scroll de mensagens
+- Botão de logout
 
-O projeto inclui um cliente de teste que simula um usuário real:
+### Em Desenvolvimento 🚧
+- Persistência de mensagens
+- Múltiplas salas de chat
+- Mensagens privadas
 
-```bash
-# Terminal 1: Iniciar o servidor
-npm run dev
+## API do Socket.IO
 
-# Terminal 2: Executar o cliente de teste
-npx tsx test-client.ts
-```
+### Cliente → Servidor
+- `joinRoom(username)` - Entrar no chat
+- `sendMessage(content)` - Enviar mensagem
+- `leaveRoom()` - Sair do chat
 
-O cliente de teste irá:
+### Servidor → Cliente
+- `message(message)` - Nova mensagem
+- `userJoined(user)` - Usuário entrou
+- `userLeft(user)` - Usuário saiu
+- `roomUsers(users)` - Lista de usuários online
+- `error(message)` - Erro
 
-- Conectar automaticamente ao servidor
-- Enviar evento `joinRoom` com username aleatório
-- Enviar 4 mensagens de teste em intervalos de 2 segundos
-- Desconectar após 15 segundos
-- Mostrar logs detalhados de todos os eventos
+## Scripts Disponíveis
 
-### 2. Testando com Socket.IO Client (Manual)
+### Backend (`server/`)
+- `npm run dev` - Iniciar em modo desenvolvimento
+- `npm run build` - Build para produção
+- `npm start` - Iniciar servidor de produção
+- `npm run lint` - Executar linting
 
-```javascript
-import { io } from "socket.io-client";
+### Frontend (`client/`)
+- `npm run dev` - Iniciar dev server
+- `npm run build` - Build para produção
+- `npm run preview` - Preview do build de produção
+- `npm run lint` - Executar linting
 
-const socket = io("http://localhost:3000");
+## Documentação Adicional
 
-// Conectar e entrar no chat
-socket.on("connect", () => {
-  socket.emit("joinRoom", "MeuNome");
-});
-
-// Ouvir mensagens
-socket.on("message", (msg) => {
-  console.log(`${msg.username}: ${msg.content}`);
-});
-
-// Enviar mensagem
-socket.emit("sendMessage", "Olá pessoal!");
-```
-
-### 3. Verificando a API REST
-
-```bash
-# Verificar status do servidor
-curl http://localhost:3000/api/health
-```
-
-### 4. Logs e Debug
-
-O servidor exibe logs detalhados no console:
-
-- Conexões e desconexões de usuários
-- Mensagens enviadas/recebidas
-- Erros de validação
-- Estado da lista de usuários
-
-## Status das Funcionalidades
-
-### ✅ Implementado
-
-- [x] **Servidor básico com Socket.IO** - Servidor HTTP + WebSocket funcional
-- [x] **Sistema de usuários** - Gerenciamento completo de conexões
-- [x] **Histórico de mensagens** - Últimas 100 mensagens em memória
-- [x] **Sistema de validações** - Validação de entrada e sanitização
-- [x] **Notificações em tempo real** - Entrada/saída de usuários
-- [x] **Lista de usuários online** - Atualização automática
-- [x] **Cliente de teste** - Script automatizado para testes
-
-### 🚧 Em desenvolvimento
-
-- [ ] **Salas de chat múltiplas** - Sistema de rooms
-- [ ] **Interface web** - Frontend para o chat
-- [ ] **Testes automatizados** - Suíte de testes unitários/integração
-
-### 📋 Planejado
-
-- [ ] **Persistência** - Banco de dados para histórico
-- [ ] **Autenticação** - Sistema de login/registro
-- [ ] **Mensagens privadas** - Chat direto entre usuários
+Para documentação técnica detalhada do backend, consulte `server/README.md`
 
 ## Licença
 
 MIT
 
 ---
+
+**Desenvolvido com Node.js, React, TypeScript e Socket.IO**
