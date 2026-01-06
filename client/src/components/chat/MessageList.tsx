@@ -2,13 +2,15 @@ import { useRef, useEffect } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import type { Message } from '../../types/message'
 import { MessageItem } from './MessageItem'
+import { TypingIndicator } from './TypingIndicator'
 
 interface MessageListProps {
     messages: Message[]
     currentUsername: string
+    usersTyping: string[]
 }
 
-export const MessageList = ({ messages, currentUsername }: MessageListProps) => {
+export const MessageList = ({ messages, currentUsername, usersTyping }: MessageListProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -16,16 +18,17 @@ export const MessageList = ({ messages, currentUsername }: MessageListProps) => 
     }, [messages])
 
     return (
-        <div className="flex-1 bg-white dark:bg-gray-800 p-6 overflow-y-auto">
+        <div className="flex-1 bg-gray-50 dark:bg-gray-950 p-4 overflow-y-auto">
             <AnimatePresence>
                 {messages.map((message) => (
                     <MessageItem
                         key={message.id}
                         message={message}
-                        isOwnMessage={message.sender === currentUsername}
+                        isOwnMessage={message.username === currentUsername}
                     />
                 ))}
             </AnimatePresence>
+            <TypingIndicator usersTyping={usersTyping} />
             <div ref={messagesEndRef} />
         </div>
     )

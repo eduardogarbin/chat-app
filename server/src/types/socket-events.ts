@@ -16,6 +16,12 @@ export interface ServerToClientEvents {
   // Lista de usuários na sala atual
   roomUsers: (users: User[]) => void;
 
+  // Usuário está digitando
+  userTyping: (username: string) => void;
+
+  // Usuário parou de digitar
+  userStoppedTyping: (username: string) => void;
+
   // Erro do servidor
   error: (error: string) => void;
 }
@@ -32,4 +38,10 @@ export interface ClientToServerEvents {
 
   // Sair da sala atual
   leaveRoom: () => void;
+
+  // Notificar que está digitando
+  typing: () => void;
+
+  // Notificar que parou de digitar
+  stopTyping: () => void;
 }

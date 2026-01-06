@@ -93,6 +93,22 @@ io.on('connection', (socket) => {
         io.emit('message', message);
     });
 
+    // Evento de digitação
+    socket.on('typing', () => {
+        const user = userService.getUser(socket.id);
+        if (user) {
+            socket.broadcast.emit('userTyping', user.username);
+        }
+    });
+
+    // Evento de parada de digitação
+    socket.on('stopTyping', () => {
+        const user = userService.getUser(socket.id);
+        if (user) {
+            socket.broadcast.emit('userStoppedTyping', user.username);
+        }
+    });
+
     // Passo 3: Quando um usuário desconecta, removemos ele da lista
     socket.on('disconnect', () => {
         const user = userService.removeUser(socket.id);
