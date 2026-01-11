@@ -1,40 +1,46 @@
 import { motion } from 'framer-motion'
+import { useState, useEffect } from 'react'
 import type { Message } from '../../types/message'
+import { getUserColor } from '../../utils/colors'
+import { getRelativeTime, getFullDateTime } from '../../utils/time'
+import { MessageReactions } from './MessageReactions'
 
 interface MessageItemProps {
     message: Message
     isOwnMessage: boolean
+    currentUserId: string
+    onReactionToggle: (messageId: string, emoji: string) => void
+    openReactionPopup: string | null
+    setOpenReactionPopup: (messageId: string | null) => void
 }
 
-const getUserColor = (username: string) => {
-    const colors = [
-        { bg: '#6b7280', textColor: '#ffffff' },
-        { bg: '#71717a', textColor: '#ffffff' },
-        { bg: '#78716c', textColor: '#ffffff' },
-        { bg: '#737373', textColor: '#ffffff' },
-        { bg: '#64748b', textColor: '#ffffff' },
-    ]
-    const index = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
-    return colors[index]
-}
-
-export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
+export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionToggle, openReactionPopup, setOpenReactionPopup }: MessageItemProps) => {
     const isSystemMessage = message.userId === 'system'
     const userColor = getUserColor(message.username)
+    const [relativeTime, setRelativeTime] = useState(getRelativeTime(message.timestamp))
+
+    // Atualiza o tempo relativo a cada minuto
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setRelativeTime(getRelativeTime(message.timestamp))
+        }, 60000) // Atualiza a cada 60 segundos
+
+        return () => clearInterval(interval)
+    }, [message.timestamp])
 
     return (
         <motion.div
             initial={{ opacity: 0, x: isOwnMessage ? 20 : -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0 }}
-            className={`mb-3 flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
+            className={`mb-3 flex relative ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
         >
             {isSystemMessage ? (
                 <div className="max-w-xs lg:max-w-md px-3 py-1.5 rounded-md bg-gray-200 dark:bg-gray-800 text-center">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{message.content}</p>
                 </div>
             ) : (
-                <div className="flex items-end gap-2 max-w-xs lg:max-w-md">
+                <div className="flex items-end gap-2 max-w-xs lg:max-w-md relative z-0">
                     {!isOwnMessage && (
                         <div
                             className="w-7 h-7 rounded-full flex items-center justify-center font-medium text-xs flex-shrink-0"
@@ -46,26 +52,58 @@ export const MessageItem = ({ message, isOwnMessage }: MessageItemProps) => {
                             {message.username.charAt(0).toUpperCase()}
                         </div>
                     )}
-                    <div className="flex flex-col gap-0.5">
-                        <div
-                            className={`px-3 py-2 rounded-lg ${
-                                isOwnMessage
-                                    ? 'bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900'
-                                    : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'
-                            }`}
-                        >
-                            {!isOwnMessage && (
-                                <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
-                                    {message.username}
-                                </p>
+                    <div className="flex flex-col gap-0.5 relative z-0">
+                        <div className={`flex items-start gap-2 relative z-0 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
+                            <div
+                                className={`px-3 py-2 rounded-lg ${
+                                    isOwnMessage
+                                        ? 'bg-violet-600 dark:bg-violet-500 text-white shadow-lg shadow-violet-500/30'
+                                        : 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-gray-100 border border-gray-200/50 dark:border-gray-700/50 shadow-sm'
+                                }`}
+                            >
+                                {!isOwnMessage && (
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                        {message.username}
+                                    </p>
+                                )}
+                                <p className="text-sm">{message.content}</p>
+                            </div>
+
+                            {/* Ícone de adicionar reação ao lado da mensagem */}
+                            {!isSystemMessage && (
+                                <div className="flex-shrink-0 pt-1 relative z-[25]">
+                                    <MessageReactions
+                                        messageId={message.id}
+                                        reactions={[]} // Passa array vazio para mostrar apenas o botão
+                                        currentUserId={currentUserId}
+                                        onReactionToggle={onReactionToggle}
+                                        showOnlyButton={true}
+                                        isOwnMessage={isOwnMessage}
+                                        isPopupOpen={openReactionPopup === message.id}
+                                        onTogglePopup={(isOpen) => setOpenReactionPopup(isOpen ? message.id : null)}
+                                    />
+                                </div>
                             )}
-                            <p className="text-sm">{message.content}</p>
                         </div>
-                        <p className="text-xs text-gray-400 dark:text-gray-600 px-1">
-                            {new Date(message.timestamp).toLocaleTimeString('pt-BR', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}
+
+                        {/* Reações existentes abaixo da mensagem */}
+                        {!isSystemMessage && message.reactions && message.reactions.length > 0 && (
+                            <div className="px-1">
+                                <MessageReactions
+                                    messageId={message.id}
+                                    reactions={message.reactions}
+                                    currentUserId={currentUserId}
+                                    onReactionToggle={onReactionToggle}
+                                    showOnlyButton={false}
+                                />
+                            </div>
+                        )}
+
+                        <p
+                            className="text-xs text-gray-400 dark:text-gray-600 px-1 cursor-default"
+                            title={getFullDateTime(message.timestamp)}
+                        >
+                            {relativeTime}
                         </p>
                     </div>
                 </div>

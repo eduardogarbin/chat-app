@@ -109,6 +109,22 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Evento de adicionar/remover reação
+    socket.on('toggleReaction', (messageId: string, emoji: string) => {
+        const user = userService.getUser(socket.id);
+        if (!user) {
+            socket.emit('error', 'Usuário não está conectado');
+            return;
+        }
+
+        const updatedMessage = messageService.toggleReaction(messageId, emoji, user.id, user.username);
+
+        if (updatedMessage) {
+            // Envia a mensagem atualizada para todos os clientes
+            io.emit('messageUpdated', updatedMessage);
+        }
+    });
+
     // Passo 3: Quando um usuário desconecta, removemos ele da lista
     socket.on('disconnect', () => {
         const user = userService.removeUser(socket.id);

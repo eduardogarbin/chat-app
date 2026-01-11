@@ -11,14 +11,14 @@ export const ThemeToggle = ({ theme, toggleTheme }: ThemeToggleProps) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={toggleTheme}
-            className="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+            className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors"
             aria-label="Alternar tema"
             title={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
         >
             {theme === 'light' ? (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-700"
+                    className="h-5 w-5 text-violet-700"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -33,7 +33,7 @@ export const ThemeToggle = ({ theme, toggleTheme }: ThemeToggleProps) => {
             ) : (
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-yellow-300"
+                    className="h-5 w-5 text-violet-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

@@ -19,9 +19,9 @@ export const Toast = ({ message, type, isVisible, onClose }: ToastProps) => {
     }, [isVisible, onClose])
 
     const colors = {
-        success: 'bg-green-600 dark:bg-green-500',
-        error: 'bg-red-600 dark:bg-red-500',
-        info: 'bg-gray-700 dark:bg-gray-600'
+        success: 'bg-green-600/90 dark:bg-green-500/90',
+        error: 'bg-red-600/90 dark:bg-red-500/90',
+        info: 'bg-violet-600/90 dark:bg-violet-500/90'
     }
 
     const icons = {
@@ -52,7 +52,7 @@ export const Toast = ({ message, type, isVisible, onClose }: ToastProps) => {
                     className="fixed top-4 right-4 z-50"
                 >
                     <div
-                        className={`flex items-center gap-3 px-4 py-3 rounded-md shadow-lg text-white ${colors[type]}`}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-white backdrop-blur-xl border border-white/20 ${colors[type]}`}
                     >
                         {icons[type]}
                         <span className="font-medium">{message}</span>

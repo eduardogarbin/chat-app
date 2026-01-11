@@ -12,6 +12,7 @@ function App() {
     const [messages, setMessages] = useState<Message[]>([])
     const [inputMessage, setInputMessage] = useState('')
     const [username, setUsername] = useState('')
+    const [userId, setUserId] = useState('')
     const [isConnected, setIsConnected] = useState(false)
     const [hasEnteredChat, setHasEnteredChat] = useState(false)
     const [onlineUsers, setOnlineUsers] = useState(0)
@@ -25,9 +26,11 @@ function App() {
     useEffect(() => {
         const newSocket = io('http://localhost:3000')
         setSocket(newSocket)
+        setUserId(newSocket.id || '')
 
         newSocket.on('connect', () => {
             setIsConnected(true)
+            setUserId(newSocket.id || '')
             setToast({ message: 'Conectado ao servidor', type: 'success', isVisible: true })
         })
 
@@ -79,6 +82,14 @@ function App() {
             setUsersTyping((prev) => prev.filter((u) => u !== username))
         })
 
+        newSocket.on('messageUpdated', (updatedMessage: Message) => {
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.id === updatedMessage.id ? updatedMessage : msg
+                )
+            )
+        })
+
         newSocket.on('error', (errorMessage) => {
             alert(`Erro: ${errorMessage}`)
         })
@@ -110,6 +121,12 @@ function App() {
         setHasEnteredChat(false)
     }
 
+    const handleReactionToggle = (messageId: string, emoji: string) => {
+        if (socket) {
+            socket.emit('toggleReaction', messageId, emoji)
+        }
+    }
+
     if (!hasEnteredChat) {
         return (
             <>
@@ -130,8 +147,8 @@ function App() {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-100 dark:bg-gray-950 p-4">
-                <div className="max-w-4xl mx-auto h-[calc(100vh-2rem)] flex flex-col">
+            <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 p-4">
+                <div className="max-w-4xl mx-auto h-[calc(100vh-2rem)] flex flex-col shadow-2xl shadow-violet-500/10 rounded-2xl overflow-hidden">
                     <ChatHeader
                         username={username}
                         isConnected={isConnected}
@@ -141,7 +158,9 @@ function App() {
                     <MessageList
                         messages={messages}
                         currentUsername={username}
+                        currentUserId={userId}
                         usersTyping={usersTyping}
+                        onReactionToggle={handleReactionToggle}
                     />
                     <ChatInput
                         inputMessage={inputMessage}

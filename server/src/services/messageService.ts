@@ -38,6 +38,51 @@ class MessageService {
   getMessages(): Message[] {
     return [...this.messages];
   }
+
+  toggleReaction(messageId: string, emoji: string, userId: string, username: string): Message | null {
+    const message = this.messages.find(m => m.id === messageId);
+    if (!message) {
+      return null;
+    }
+
+    // Inicializa reactions se não existir
+    if (!message.reactions) {
+      message.reactions = [];
+    }
+
+    // Procura se já existe uma reação com esse emoji
+    const reactionIndex = message.reactions.findIndex(r => r.emoji === emoji);
+
+    if (reactionIndex >= 0) {
+      // Reação já existe
+      const reaction = message.reactions[reactionIndex];
+      const userIndex = reaction.userIds.indexOf(userId);
+
+      if (userIndex >= 0) {
+        // Usuário já reagiu com esse emoji - remove a reação
+        reaction.userIds.splice(userIndex, 1);
+        reaction.usernames.splice(userIndex, 1);
+
+        // Se não há mais ninguém com essa reação, remove o emoji completamente
+        if (reaction.userIds.length === 0) {
+          message.reactions.splice(reactionIndex, 1);
+        }
+      } else {
+        // Usuário ainda não reagiu com esse emoji - adiciona
+        reaction.userIds.push(userId);
+        reaction.usernames.push(username);
+      }
+    } else {
+      // Primeira vez que alguém reage com esse emoji
+      message.reactions.push({
+        emoji,
+        userIds: [userId],
+        usernames: [username]
+      });
+    }
+
+    return message;
+  }
 }
 
 export const messageService = new MessageService();

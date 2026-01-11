@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { getUserColor } from '../../utils/colors'
 
 interface ChatHeaderProps {
     username: string
@@ -7,25 +8,13 @@ interface ChatHeaderProps {
     onlineUsers: number
 }
 
-const getUserColor = (username: string) => {
-    const colors = [
-        { bg: '#6b7280', textColor: '#ffffff' },
-        { bg: '#71717a', textColor: '#ffffff' },
-        { bg: '#78716c', textColor: '#ffffff' },
-        { bg: '#737373', textColor: '#ffffff' },
-        { bg: '#64748b', textColor: '#ffffff' },
-    ]
-    const index = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length
-    return colors[index]
-}
-
 export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers }: ChatHeaderProps) => {
     const userColor = getUserColor(username)
     return (
         <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-t-lg border-b border-gray-200 dark:border-gray-800 p-4 flex items-center justify-between"
+            className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-t-2xl border-b border-white/20 dark:border-gray-700/50 p-4 flex items-center justify-between"
         >
             <div className="flex items-center gap-3">
                 <div className="flex flex-col">
@@ -57,7 +46,7 @@ export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers }: Cha
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={onLogout}
-                    className="text-xs text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    className="text-xs bg-violet-600 dark:bg-violet-500 text-white font-medium px-3 py-1.5 rounded-md hover:bg-violet-700 dark:hover:bg-violet-600 transition-colors shadow-sm"
                 >
                     Sair
                 </motion.button>

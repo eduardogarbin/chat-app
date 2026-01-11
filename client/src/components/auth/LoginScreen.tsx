@@ -8,11 +8,11 @@ interface LoginScreenProps {
 
 export const LoginScreen = ({ username, setUsername, onSubmit }: LoginScreenProps) => {
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-950 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-4">
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-8 w-full max-w-md"
+                className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/50 p-8 w-full max-w-md shadow-2xl shadow-violet-500/10"
             >
                 <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
                     Chat App
@@ -27,7 +27,7 @@ export const LoginScreen = ({ username, setUsername, onSubmit }: LoginScreenProp
                             id="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 transition-all"
+                            className="w-full px-4 py-2.5 rounded-lg border border-gray-300/50 dark:border-gray-700/50 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-500 transition-all"
                             placeholder="Digite seu nome..."
                             autoFocus
                         />
@@ -36,7 +36,7 @@ export const LoginScreen = ({ username, setUsername, onSubmit }: LoginScreenProp
                         whileHover={{ scale: 1.01 }}
                         whileTap={{ scale: 0.99 }}
                         type="submit"
-                        className="w-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 font-medium py-2.5 rounded-md hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+                        className="w-full bg-violet-600 dark:bg-violet-500 text-white font-medium py-2.5 rounded-md hover:bg-violet-700 dark:hover:bg-violet-600 transition-colors shadow-sm"
                     >
                         Entrar
                     </motion.button>

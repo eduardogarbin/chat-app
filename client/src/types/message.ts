@@ -1,3 +1,9 @@
+export interface Reaction {
+    emoji: string
+    userIds: string[]
+    usernames: string[]
+}
+
 export interface Message {
     id: string
     userId: string
@@ -5,4 +11,5 @@ export interface Message {
     content: string
     timestamp: Date
     room?: string
+    reactions?: Reaction[]
 }
