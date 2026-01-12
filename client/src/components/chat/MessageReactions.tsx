@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import type { Reaction } from '../../types/message'
+import { EmojiIcon } from '../ui/EmojiIcon'
 
 interface MessageReactionsProps {
     messageId: string
@@ -43,10 +44,11 @@ export const MessageReactions = ({ messageId, reactions = [], currentUserId, onR
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={(e) => handleToggle(e)}
-                    className="w-5 h-5 flex items-center justify-center rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors text-sm relative z-[25]"
+                    className="group w-6 h-6 flex items-center justify-center rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 dark:text-gray-600 hover:text-gray-600 dark:hover:text-gray-400 transition-colors relative z-[25]"
                     title="Adicionar reação"
+                    aria-label="Adicionar reação"
                 >
-                    😊
+                    <EmojiIcon />
                 </motion.button>
 
                 {/* Menu de reações rápidas */}

@@ -53,7 +53,7 @@ export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionTo
                         </div>
                     )}
                     <div className="flex flex-col gap-0.5 relative z-0">
-                        <div className={`flex items-start gap-2 relative z-0 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <div className={`flex items-center gap-1 relative z-0 ${isOwnMessage ? 'flex-row-reverse' : 'flex-row'}`}>
                             <div
                                 className={`px-3 py-2 rounded-lg ${
                                     isOwnMessage
@@ -71,7 +71,7 @@ export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionTo
 
                             {/* Ícone de adicionar reação ao lado da mensagem */}
                             {!isSystemMessage && (
-                                <div className="flex-shrink-0 pt-1 relative z-[25]">
+                                <div className="flex-shrink-0 relative z-[25]">
                                     <MessageReactions
                                         messageId={message.id}
                                         reactions={[]} // Passa array vazio para mostrar apenas o botão

@@ -84,7 +84,7 @@ export const MessageList = ({ messages, currentUsername, currentUserId, usersTyp
         <div
             ref={containerRef}
             onScroll={handleScroll}
-            className="flex-1 bg-white/40 dark:bg-gray-900/40 backdrop-blur-lg p-4 overflow-y-auto relative"
+            className="flex-1 bg-white/40 dark:bg-gray-900/40 backdrop-blur-lg p-4 overflow-y-auto relative shadow-inner shadow-gray-900/[0.02] dark:shadow-black/10"
         >
             <ScrollToBottom
                 isVisible={showScrollButton}
