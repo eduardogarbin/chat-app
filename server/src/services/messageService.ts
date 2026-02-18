@@ -18,7 +18,7 @@ class MessageService {
 
   createMessage(userId: string, username: string, content: string): Message {
     const message: Message = {
-      id: new Date().getTime().toString() + Math.random().toString(36).substr(2, 9),
+      id: new Date().getTime().toString() + Math.random().toString(36).slice(2, 11),
       userId,
       username,
       content: content.trim(),
@@ -56,6 +56,12 @@ class MessageService {
     if (reactionIndex >= 0) {
       // Reação já existe
       const reaction = message.reactions[reactionIndex];
+
+      // Guard defensivo exigido pelo noUncheckedIndexedAccess: embora o
+      // findIndex acima garanta que o elemento existe, o TypeScript trata
+      // todo acesso por indice como possivelmente undefined nesse modo strict.
+      if (!reaction) return message;
+
       const userIndex = reaction.userIds.indexOf(userId);
 
       if (userIndex >= 0) {

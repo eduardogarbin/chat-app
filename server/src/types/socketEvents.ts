@@ -7,6 +7,9 @@ export interface ServerToClientEvents {
   // Mensagem nova no chat
   message: (message: Message) => void;
 
+  // Mensagem atualizada (ex: nova reação adicionada ou removida)
+  messageUpdated: (message: Message) => void;
+
   // Usuário entrou na sala
   userJoined: (user: User) => void;
 
@@ -44,4 +47,7 @@ export interface ClientToServerEvents {
 
   // Notificar que parou de digitar
   stopTyping: () => void;
+
+  // Adicionar ou remover uma reação de emoji em uma mensagem
+  toggleReaction: (messageId: string, emoji: string) => void;
 }
