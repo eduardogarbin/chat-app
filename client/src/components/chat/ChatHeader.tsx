@@ -1,15 +1,17 @@
 import { motion } from 'framer-motion'
 import { getUserColor } from '../../utils/colors'
 import { LogoutIcon } from '../ui/LogoutIcon'
+import type { Room } from '../../types/room'
 
 interface ChatHeaderProps {
     username: string
     isConnected: boolean
     onLogout: () => void
     onlineUsers: number
+    currentRoom: Room | null
 }
 
-export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers }: ChatHeaderProps) => {
+export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers, currentRoom }: ChatHeaderProps) => {
     const userColor = getUserColor(username)
     return (
         <motion.div
@@ -20,7 +22,14 @@ export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers }: Cha
             <div className="flex items-center gap-3">
                 <div className="flex flex-col">
                     <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        Chat
+                        {currentRoom ? (
+                            <span>
+                                <span className="text-violet-500 dark:text-violet-400 font-normal">#</span>
+                                {currentRoom.name}
+                            </span>
+                        ) : (
+                            'Chat'
+                        )}
                     </h1>
                     <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-500">
                         <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />

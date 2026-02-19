@@ -1,4 +1,4 @@
-import { Message, User } from './';
+import { Message, User, Room } from './';
 
 /**
  * Eventos que o SERVIDOR envia para o CLIENTE
@@ -10,6 +10,9 @@ export interface ServerToClientEvents {
   // Mensagem atualizada (ex: nova reação adicionada ou removida)
   messageUpdated: (message: Message) => void;
 
+  // Histórico de mensagens da sala ao entrar nela
+  messageHistory: (messages: Message[]) => void;
+
   // Usuário entrou na sala
   userJoined: (user: User) => void;
 
@@ -18,6 +21,9 @@ export interface ServerToClientEvents {
 
   // Lista de usuários na sala atual
   roomUsers: (users: User[]) => void;
+
+  // Lista de salas disponíveis no servidor
+  roomsList: (rooms: Room[]) => void;
 
   // Usuário está digitando
   userTyping: (username: string) => void;
@@ -33,14 +39,17 @@ export interface ServerToClientEvents {
  * Eventos que o CLIENTE envia para o SERVIDOR
  */
 export interface ClientToServerEvents {
-  // Enviar mensagem
+  // Enviar mensagem (o servidor sabe a sala pelo estado do usuário)
   sendMessage: (content: string) => void;
 
-  // Entrar no chat com username
-  joinRoom: (username: string) => void;
+  // Entrar em uma sala específica com username e ID da sala
+  joinRoom: (username: string, roomId: string) => void;
 
   // Sair da sala atual
   leaveRoom: () => void;
+
+  // Solicitar a lista de salas disponíveis
+  getRooms: () => void;
 
   // Notificar que está digitando
   typing: () => void;

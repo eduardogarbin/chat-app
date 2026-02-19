@@ -16,13 +16,14 @@ class MessageService {
     return { valid: true };
   }
 
-  createMessage(userId: string, username: string, content: string): Message {
+  createMessage(userId: string, username: string, content: string, roomId?: string): Message {
     const message: Message = {
       id: new Date().getTime().toString() + Math.random().toString(36).slice(2, 11),
       userId,
       username,
       content: content.trim(),
-      timestamp: new Date()
+      timestamp: new Date(),
+      room: roomId,
     };
     return message;
   }
@@ -37,6 +38,19 @@ class MessageService {
 
   getMessages(): Message[] {
     return [...this.messages];
+  }
+
+  /**
+   * Retorna as últimas N mensagens de uma sala específica.
+   *
+   * slice(-limit) pega os últimos `limit` elementos do array — se o array
+   * tiver menos elementos do que o limite, retorna tudo. É a forma mais
+   * concisa de implementar "últimas N mensagens" sem precisar reverter
+   * ou calcular índices manualmente.
+   */
+  getMessagesByRoom(roomId: string, limit = 50): Message[] {
+    const roomMessages = this.messages.filter(m => m.room === roomId);
+    return roomMessages.slice(-limit);
   }
 
   toggleReaction(messageId: string, emoji: string, userId: string, username: string): Message | null {
