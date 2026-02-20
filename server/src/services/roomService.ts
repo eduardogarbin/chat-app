@@ -40,6 +40,7 @@ class RoomService {
         if (this.rooms.size === 0) {
             this.createRoom('Geral', 'Sala principal para conversas gerais');
             this.createRoom('Tecnologia', 'Discussões sobre programação e inovação');
+            this.createRoom('Jogos', 'Recomendações e discussões sobre games');
             this.createRoom('Aleatório', 'Tópicos variados e descontraídos');
         }
     }
