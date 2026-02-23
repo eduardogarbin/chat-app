@@ -43,7 +43,7 @@ function App() {
         newSocket.on('connect', () => {
             setIsConnected(true)
             setUserId(newSocket.id || '')
-            setToast({ message: 'Conectado ao servidor', type: 'success', isVisible: true })
+            setToast({ message: 'Você está online!', type: 'success', isVisible: true })
 
             // Pede a lista de salas logo ao conectar, para já ter os dados
             // disponíveis quando o usuário chegar na tela de seleção de sala.
@@ -52,7 +52,7 @@ function App() {
 
         newSocket.on('disconnect', () => {
             setIsConnected(false)
-            setToast({ message: 'Desconectado do servidor', type: 'error', isVisible: true })
+            setToast({ message: 'Conexão perdida. Você está offline!', type: 'error', isVisible: true })
         })
 
         // Recebe a lista de salas do servidor e armazena no estado.
@@ -172,6 +172,16 @@ function App() {
         setLoginStep('username')
     }
 
+    // Volta para a seleção de sala sem apagar o username — o usuário não
+    // precisa digitar o nome novamente, só escolher outra sala.
+    const handleBackToRooms = () => {
+        setMessages([])
+        setCurrentRoom(null)
+        setUsersTyping([])
+        setHasEnteredChat(false)
+        setLoginStep('room')
+    }
+
     const handleReactionToggle = (messageId: string, emoji: string) => {
         if (socket) {
             socket.emit('toggleReaction', messageId, emoji)
@@ -225,6 +235,7 @@ function App() {
                         username={username}
                         isConnected={isConnected}
                         onLogout={handleLogout}
+                        onBackToRooms={handleBackToRooms}
                         onlineUsers={onlineUsers}
                         currentRoom={currentRoom}
                     />

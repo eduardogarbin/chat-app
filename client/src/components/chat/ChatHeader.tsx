@@ -7,11 +7,12 @@ interface ChatHeaderProps {
     username: string
     isConnected: boolean
     onLogout: () => void
+    onBackToRooms: () => void
     onlineUsers: number
     currentRoom: Room | null
 }
 
-export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers, currentRoom }: ChatHeaderProps) => {
+export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onlineUsers, currentRoom }: ChatHeaderProps) => {
     const userColor = getUserColor(username)
     return (
         <motion.div
@@ -20,6 +21,18 @@ export const ChatHeader = ({ username, isConnected, onLogout, onlineUsers, curre
             className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-t-2xl border-b border-white/20 dark:border-gray-700/50 p-4 flex items-center justify-between shadow-md shadow-gray-900/3 dark:shadow-black/10 relative z-10"
         >
             <div className="flex items-center gap-3">
+                <motion.button
+                    whileHover={{ x: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={onBackToRooms}
+                    className="cursor-pointer flex items-center justify-center w-7 h-7 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                    aria-label="Trocar sala"
+                    title="Trocar sala"
+                >
+                    <svg viewBox="0 0 16 16" className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M13 8H3M7 4l-4 4 4 4" />
+                    </svg>
+                </motion.button>
                 <div className="flex flex-col">
                     <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {currentRoom ? (

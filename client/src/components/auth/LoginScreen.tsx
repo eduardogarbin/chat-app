@@ -14,12 +14,15 @@ export const LoginScreen = ({ username, setUsername, onSubmit }: LoginScreenProp
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/50 p-8 w-full max-w-md shadow-2xl shadow-violet-500/10"
             >
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-                    Chat App
-                </h1>
+                <div className="flex items-center gap-3 mb-6">
+                    <img src="/parrot-icon.png" alt="" className="w-11 h-11 object-contain" />
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                        Loro<span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">Chat</span>
+                    </h1>
+                </div>
                 <form onSubmit={onSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-400 mb-2">
+                        <label htmlFor="username" className="block text-base font-medium text-gray-700 dark:text-gray-400 mb-2">
                             Nome de usuário
                         </label>
                         <input

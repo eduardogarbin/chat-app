@@ -24,9 +24,12 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
             >
                 {/* Header */}
                 <div className="text-center">
-                    <h1 className="font-display text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-                        Chat<span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">App</span>
-                    </h1>
+                    <div className="inline-flex items-center gap-3">
+                        <img src="/parrot-icon.png" alt="" className="w-12 h-12 object-contain" />
+                        <h1 className="font-display text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+                            Loro<span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">Chat</span>
+                        </h1>
+                    </div>
                     <p className="mt-3 text-gray-500 dark:text-gray-400 text-base">
                         Escolha uma sala para começar
                     </p>
@@ -69,8 +72,8 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                                         bg-gradient-to-br ${palette.card}
                                         border ${palette.border}
                                         shadow-md ${palette.shadow}
-                                        hover:shadow-xl
-                                        transition-all duration-200
+                                        hover:shadow-lg
+                                        transition-all duration-100
                                         ${isLastAlone ? 'col-span-2 w-1/2 mx-auto' : ''}
                                     `}
                                 >
