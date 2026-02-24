@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { getUserColor } from '../../utils/colors'
 import { LogoutIcon } from '../ui/LogoutIcon'
+import { getRoomIconPath } from '../../utils/roomIcons'
+import { ThemeToggle } from '../ui/ThemeToggle'
 import type { Room } from '../../types/room'
 
 interface ChatHeaderProps {
@@ -10,9 +12,11 @@ interface ChatHeaderProps {
     onBackToRooms: () => void
     onlineUsers: number
     currentRoom: Room | null
+    theme: 'light' | 'dark'
+    toggleTheme: () => void
 }
 
-export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onlineUsers, currentRoom }: ChatHeaderProps) => {
+export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onlineUsers, currentRoom, theme, toggleTheme }: ChatHeaderProps) => {
     const userColor = getUserColor(username)
     return (
         <motion.div
@@ -34,12 +38,23 @@ export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onl
                     </svg>
                 </motion.button>
                 <div className="flex flex-col">
-                    <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
                         {currentRoom ? (
-                            <span>
-                                <span className="text-violet-500 dark:text-violet-400 font-normal">#</span>
+                            <>
+                                <svg
+                                    aria-hidden="true"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={1.75}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="w-4 h-4 text-violet-500 dark:text-violet-400 flex-shrink-0"
+                                >
+                                    <path d={getRoomIconPath(currentRoom.id)} />
+                                </svg>
                                 {currentRoom.name}
-                            </span>
+                            </>
                         ) : (
                             'Chat'
                         )}
@@ -51,6 +66,7 @@ export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onl
                 </div>
             </div>
             <div className="flex items-center gap-3">
+                <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
                     <div
                         className="w-7 h-7 rounded-full flex items-center justify-center font-semibold text-xs shadow-md"

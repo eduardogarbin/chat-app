@@ -58,11 +58,11 @@ export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionTo
                                 className={`px-3 py-2 rounded-lg ${
                                     isOwnMessage
                                         ? 'bg-violet-600 dark:bg-violet-500 text-white shadow-lg shadow-violet-500/30'
-                                        : 'bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-gray-100 border border-gray-200/50 dark:border-gray-700/50 shadow-sm'
+                                        : 'bg-white/90 dark:bg-gray-700/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 border border-gray-200/50 dark:border-gray-600/50 shadow-sm'
                                 }`}
                             >
                                 {!isOwnMessage && (
-                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+                                    <p className="text-xs font-medium text-gray-500 dark:text-gray-300 mb-1">
                                         {message.username}
                                     </p>
                                 )}
@@ -100,7 +100,7 @@ export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionTo
                         )}
 
                         <p
-                            className="text-xs text-gray-400 dark:text-gray-600 px-1 cursor-default"
+                            className="text-xs text-gray-400 dark:text-gray-400 px-1 cursor-default"
                             title={getFullDateTime(message.timestamp)}
                         >
                             {relativeTime}

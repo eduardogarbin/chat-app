@@ -2,32 +2,38 @@ import { motion } from 'framer-motion'
 import type { Room } from '../../types/room'
 import { getRoomPalette } from '../../utils/roomColors'
 import { getRoomIconPath } from '../../utils/roomIcons'
+import { ThemeToggle } from '../ui/ThemeToggle'
 
 interface RoomSelectScreenProps {
     username: string
     rooms: Room[]
     onSelectRoom: (room: Room) => void
     onBack: () => void
+    theme: 'light' | 'dark'
+    toggleTheme: () => void
 }
 
-export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: RoomSelectScreenProps) => {
+export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack, theme, toggleTheme }: RoomSelectScreenProps) => {
     const isOddCount = rooms.length % 2 !== 0
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-6">
+        <div className="relative min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-4 sm:p-6">
+            <div className="absolute top-4 right-4">
+                <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+            </div>
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="w-full max-w-2xl backdrop-blur-xl bg-white/20 dark:bg-gray-900/25 rounded-3xl border border-white/50 dark:border-gray-700/40 ring-1 ring-white/30 dark:ring-gray-700/20 shadow-2xl shadow-violet-400/20 p-8 flex flex-col gap-7"
+                className="w-full max-w-2xl backdrop-blur-xl bg-white/20 dark:bg-white/8 rounded-3xl border border-white/50 dark:border-white/10 ring-1 ring-white/30 dark:ring-white/8 shadow-2xl shadow-violet-400/20 p-5 sm:p-8 flex flex-col gap-5 sm:gap-7"
             >
                 {/* Header */}
                 <div className="text-center">
                     <div className="inline-flex items-center gap-3">
-                        <img src="/parrot-icon.png" alt="" className="w-12 h-12 object-contain" />
-                        <h1 className="font-display text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
-                            Loro<span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">Chat</span>
+                        <img src="/parrot-icon.png" alt="" className="w-9 h-9 sm:w-12 sm:h-12 object-contain" />
+                        <h1 className="font-display text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+                            Loro<span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 dark:from-violet-400 dark:to-fuchsia-400 bg-clip-text text-transparent">Chat</span>
                         </h1>
                     </div>
                     <p className="mt-3 text-gray-500 dark:text-gray-400 text-base">
@@ -44,7 +50,7 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                     </div>
                 </div>
 
-                <div className="border-t border-black/5 dark:border-gray-700/30 -mx-8" />
+                <div className="border-t border-black/5 dark:border-gray-700/30 -mx-5 sm:-mx-8" />
 
                 {/* Room Grid */}
                 {rooms.length === 0 ? (
@@ -52,7 +58,7 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                         Carregando salas...
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
                         {rooms.map((room, index) => {
                             const palette = getRoomPalette(index)
                             const isLastAlone = isOddCount && index === rooms.length - 1
@@ -68,7 +74,7 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                                     onClick={() => onSelectRoom(room)}
                                     className={`
                                         cursor-pointer
-                                        relative overflow-hidden text-left rounded-3xl p-6 min-h-[160px] flex flex-col
+                                        relative overflow-hidden text-left rounded-2xl sm:rounded-3xl p-4 sm:p-6 min-h-[130px] sm:min-h-[160px] flex flex-col
                                         bg-gradient-to-br ${palette.card}
                                         border ${palette.border}
                                         shadow-md ${palette.shadow}
@@ -86,22 +92,22 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                                         strokeWidth={1}
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        className={`absolute -bottom-1 right-4 w-20 h-20 select-none pointer-events-none ${palette.hash}`}
+                                        className={`absolute -bottom-1 right-3 w-14 h-14 sm:w-20 sm:h-20 select-none pointer-events-none ${palette.hash}`}
                                     >
                                         <path d={getRoomIconPath(room.id)} />
                                     </svg>
 
                                     {/* Content */}
                                     <div className="relative z-10 flex flex-col flex-1">
-                                        <p className={`font-display text-xl font-bold mb-2 ${palette.name}`}>
+                                        <p className={`font-display text-base sm:text-xl font-bold mb-1 sm:mb-2 ${palette.name}`}>
                                             {room.name}
                                         </p>
                                         {room.description && (
-                                            <p className={`text-sm leading-relaxed ${palette.desc}`}>
+                                            <p className={`text-xs sm:text-sm leading-relaxed ${palette.desc}`}>
                                                 {room.description}
                                             </p>
                                         )}
-                                        <div className="mt-auto pt-4">
+                                        <div className="mt-auto pt-3 sm:pt-4">
                                             <span className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white/25 ${palette.name}`}>
                                                 Entrar
                                                 <svg viewBox="0 0 16 16" className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -122,7 +128,7 @@ export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack }: Room
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
                     onClick={onBack}
-                    className="group cursor-pointer inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors mx-auto"
+                    className="group cursor-pointer inline-flex items-center gap-1.5 text-sm text-gray-400 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors mx-auto"
                 >
                     <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
                         <path d="M13 8H3M7 4l-4 4 4 4" />

@@ -17,10 +17,10 @@ const httpServer = createServer(app);
 /**
  * Origens permitidas pelo CORS, lidas do arquivo .env.
  *
- * A variavel ALLOWED_ORIGINS suporta multiplas origens separadas por virgula.
+ * A variável ALLOWED_ORIGINS suporta múltiplas origens separadas por vírgula.
  * Ex: "http://localhost:5173,https://meuapp.com"
  *
- * Caso a variavel nao esteja definida, cai no fallback de desenvolvimento.
+ * Caso a variável não esteja definida, cai no fallback de desenvolvimento.
  */
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://localhost:5173'];
 
@@ -29,7 +29,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://local
  *
  * Os generics <ClientToServerEvents, ServerToClientEvents> garantem que
  * o TypeScript valide todos os eventos emitidos e escutados em tempo de
- * compilacao, evitando erros de digitacao nos nomes de eventos.
+ * compilação, evitando erros de digitação nos nomes de eventos.
  */
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
     cors: {
@@ -41,18 +41,18 @@ const io = new Server<ClientToServerEvents, ServerToClientEvents>(httpServer, {
 const PORT = process.env.PORT || 3000;
 
 // --- Middlewares globais ---
-// Processam toda requisicao HTTP antes de chegar nas rotas.
+// Processam toda requisição HTTP antes de chegar nas rotas.
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 
 // --- Rotas HTTP ---
-// O router contem todas as rotas REST da aplicacao.
+// O router contém todas as rotas REST da aplicação.
 app.use(router);
 
 // --- Middleware de erro ---
 // Deve ser registrado DEPOIS de todas as rotas para funcionar como
-// "rede de seguranca": so e ativado quando uma rota lanca um erro.
+// "rede de segurança": só é ativado quando uma rota lança um erro.
 app.use(errorHandler);
 
 // --- Handlers Socket.IO ---
@@ -61,12 +61,12 @@ registerSocketHandlers(io);
 
 // --- Salas padrão ---
 // Cria as salas iniciais (Geral, Tecnologia, Aleatório) antes de aceitar
-// conexoes. A funcao verifica internamente se as salas ja existem,
-// entao e seguro chama-la sempre que o servidor inicia.
+// conexões. A função verifica internamente se as salas já existem,
+// então é seguro chamá-la sempre que o servidor inicia.
 roomService.seedDefaultRooms();
 
-// --- Inicializacao ---
+// --- Inicialização ---
 httpServer.listen(PORT, () => {
     console.log(`Servidor rodando em http://localhost:${PORT}`);
-    console.log(`Socket.IO ativo e pronto para conexoes`);
+    console.log(`Socket.IO ativo e pronto para conexões`);
 });

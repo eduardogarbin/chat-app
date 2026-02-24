@@ -11,7 +11,7 @@ interface RoomListProps {
 
 export const RoomList = ({ rooms, currentRoom, onSelectRoom }: RoomListProps) => {
     return (
-        <div className="w-48 flex-shrink-0 bg-white/40 dark:bg-gray-900/30 backdrop-blur-lg border-r border-black/8 dark:border-gray-700/50 flex flex-col overflow-hidden">
+        <div className="hidden sm:flex w-48 flex-shrink-0 bg-white/40 dark:bg-gray-900/30 backdrop-blur-lg border-r border-black/8 dark:border-gray-700/50 flex-col overflow-hidden">
             <div className="px-3 py-3 border-b border-black/6 dark:border-gray-700/50">
                 <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     Salas
@@ -32,7 +32,7 @@ export const RoomList = ({ rooms, currentRoom, onSelectRoom }: RoomListProps) =>
                             className={`cursor-pointer w-full text-left px-2 py-1.5 rounded-md transition-all flex items-center gap-1.5 group ${
                                 isActive
                                     ? 'bg-white/50 dark:bg-gray-800/50 text-gray-900 dark:text-gray-100'
-                                    : 'text-gray-600 dark:text-gray-400 hover:bg-white/25 dark:hover:bg-gray-800/25 hover:text-gray-900 dark:hover:text-gray-100'
+                                    : 'text-gray-600 dark:text-gray-300 hover:bg-white/25 dark:hover:bg-gray-700/30 hover:text-gray-900 dark:hover:text-gray-100'
                             }`}
                             title={room.description}
                         >
@@ -47,7 +47,7 @@ export const RoomList = ({ rooms, currentRoom, onSelectRoom }: RoomListProps) =>
                                 className={`w-3.5 h-3.5 flex-shrink-0 ${
                                     isActive
                                         ? 'text-gray-500 dark:text-gray-400'
-                                        : 'text-gray-400 dark:text-gray-600 group-hover:text-gray-500'
+                                        : 'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-300'
                                 }`}
                             >
                                 <path d={getRoomIconPath(room.id)} />

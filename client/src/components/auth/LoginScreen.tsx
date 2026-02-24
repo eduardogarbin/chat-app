@@ -1,14 +1,20 @@
 import { motion } from 'framer-motion'
+import { ThemeToggle } from '../ui/ThemeToggle'
 
 interface LoginScreenProps {
     username: string
     setUsername: (username: string) => void
     onSubmit: (e: React.FormEvent) => void
+    theme: 'light' | 'dark'
+    toggleTheme: () => void
 }
 
-export const LoginScreen = ({ username, setUsername, onSubmit }: LoginScreenProps) => {
+export const LoginScreen = ({ username, setUsername, onSubmit, theme, toggleTheme }: LoginScreenProps) => {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-4">
+        <div className="relative min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-4">
+            <div className="absolute top-4 right-4">
+                <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+            </div>
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

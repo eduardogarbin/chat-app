@@ -5,11 +5,11 @@ import { messageService } from '../services/messageService';
 import { roomService } from '../services/roomService';
 
 /**
- * Tipos auxiliares para evitar repeticao das generics do Socket.IO.
+ * Tipos auxiliares para evitar repetição das generics do Socket.IO.
  *
  * O Socket.IO usa generics para garantir que os eventos emitidos e escutados
  * correspondam exatamente aos tipos definidos em socketEvents.ts. Sem isso,
- * o TypeScript nao saberia quais eventos sao validos nem o formato dos dados.
+ * o TypeScript não saberia quais eventos são válidos nem o formato dos dados.
  */
 type IO = Server<ClientToServerEvents, ServerToClientEvents>;
 type AppSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
@@ -17,17 +17,17 @@ type AppSocket = Socket<ClientToServerEvents, ServerToClientEvents>;
 /**
  * Registra todos os handlers de eventos Socket.IO no servidor.
  *
- * Essa funcao recebe o servidor `io` e configura o que deve acontecer
- * a cada conexao e a cada evento emitido pelo cliente.
+ * Essa função recebe o servidor `io` e configura o que deve acontecer
+ * a cada conexão e a cada evento emitido pelo cliente.
  *
- * Com multiplas salas, todos os broadcasts passam a ser escopados por sala
- * usando `io.to(roomId).emit(...)`, garantindo que mensagens, notificacoes
- * de entrada/saida e indicadores de digitacao chegam apenas aos participantes
+ * Com múltiplas salas, todos os broadcasts passam a ser escopados por sala
+ * usando `io.to(roomId).emit(...)`, garantindo que mensagens, notificações
+ * de entrada/saída e indicadores de digitação chegam apenas aos participantes
  * da sala correta.
  */
 export function registerSocketHandlers(io: IO): void {
     io.on('connection', (socket: AppSocket) => {
-        console.log(`Novo usuario conectado: ${socket.id}`);
+        console.log(`Novo usuário conectado: ${socket.id}`);
 
         // --- Lista de salas ---
         // O cliente pede a lista de salas disponíveis logo após conectar,
@@ -45,7 +45,7 @@ export function registerSocketHandlers(io: IO): void {
         socket.on('joinRoom', (username, roomId) => {
             const room = roomService.getRoom(roomId);
             if (!room) {
-                socket.emit('error', 'Sala nao encontrada');
+                socket.emit('error', 'Sala não encontrada');
                 return;
             }
 
@@ -64,7 +64,7 @@ export function registerSocketHandlers(io: IO): void {
             } else {
                 // Primeira vez que este socket entra em uma sala.
                 user = userService.addUser(socket.id, username);
-                console.log(`Usuario ${username} (${socket.id}) entrou no chat.`);
+                console.log(`Usuário ${username} (${socket.id}) entrou no chat.`);
             }
 
             // Atualiza a sala do usuário e registra no canal do Socket.IO.
@@ -77,8 +77,8 @@ export function registerSocketHandlers(io: IO): void {
 
             // Mensagem de boas-vindas apenas para quem entrou.
             const welcomeText = isSwitchingRooms
-                ? `Voce entrou em #${room.name}`
-                : `Bem-vindo, ${username}! Voce entrou em #${room.name}.`;
+                ? `Você entrou em #${room.name}`
+                : `Bem-vindo, ${username}! Você entrou em #${room.name}.`;
 
             socket.emit('message', {
                 id: new Date().getTime().toString(),
@@ -103,7 +103,7 @@ export function registerSocketHandlers(io: IO): void {
             const user = userService.getUser(socket.id);
 
             if (!user || !user.room) {
-                socket.emit('error', 'Usuario nao esta em uma sala');
+                socket.emit('error', 'Usuário não está em uma sala');
                 return;
             }
 
@@ -122,7 +122,7 @@ export function registerSocketHandlers(io: IO): void {
             io.to(user.room).emit('message', message);
         });
 
-        // --- Indicador de digitacao ---
+        // --- Indicador de digitação ---
         // Usa a sala do usuário para escopar o broadcast — só os membros
         // da mesma sala verão o indicador de digitação.
         socket.on('typing', () => {
@@ -132,7 +132,7 @@ export function registerSocketHandlers(io: IO): void {
             }
         });
 
-        // --- Parada de digitacao ---
+        // --- Parada de digitação ---
         socket.on('stopTyping', () => {
             const user = userService.getUser(socket.id);
             if (user && user.room) {
@@ -140,13 +140,13 @@ export function registerSocketHandlers(io: IO): void {
             }
         });
 
-        // --- Reacoes a mensagens ---
+        // --- Reações a mensagens ---
         // A mensagem atualizada é enviada apenas para a sala onde ela existe.
         socket.on('toggleReaction', (messageId, emoji) => {
             const user = userService.getUser(socket.id);
 
             if (!user || !user.room) {
-                socket.emit('error', 'Usuario nao esta em uma sala');
+                socket.emit('error', 'Usuário não está em uma sala');
                 return;
             }
 
@@ -157,13 +157,13 @@ export function registerSocketHandlers(io: IO): void {
             }
         });
 
-        // --- Desconexao ---
+        // --- Desconexão ---
         // Notifica apenas a sala que perdeu o usuário — os outros membros
         // do servidor em salas diferentes não precisam saber.
         socket.on('disconnect', () => {
             const user = userService.removeUser(socket.id);
             if (user) {
-                console.log(`Usuario desconectado: ${user.username} (${socket.id})`);
+                console.log(`Usuário desconectado: ${user.username} (${socket.id})`);
                 if (user.room) {
                     io.to(user.room).emit('userLeft', user);
                     io.to(user.room).emit('roomUsers', userService.getUsersByRoom(user.room));

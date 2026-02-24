@@ -35,6 +35,25 @@ function App() {
         isVisible: false
     })
 
+    // Inicializa respeitando a preferência do sistema; persiste no localStorage.
+    const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+        const stored = localStorage.getItem('theme')
+        if (stored === 'light' || stored === 'dark') return stored
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    })
+
+    const toggleTheme = () => {
+        setTheme(prev => {
+            const next = prev === 'light' ? 'dark' : 'light'
+            localStorage.setItem('theme', next)
+            return next
+        })
+    }
+
+    useEffect(() => {
+        document.documentElement.classList.toggle('dark', theme === 'dark')
+    }, [theme])
+
     useEffect(() => {
         const newSocket = io('http://localhost:3000')
         setSocket(newSocket)
@@ -198,6 +217,8 @@ function App() {
                         rooms={rooms}
                         onSelectRoom={handleJoinRoom}
                         onBack={() => setLoginStep('username')}
+                        theme={theme}
+                        toggleTheme={toggleTheme}
                     />
                     <Toast
                         message={toast.message}
@@ -215,6 +236,8 @@ function App() {
                     username={username}
                     setUsername={setUsername}
                     onSubmit={handleSetUsername}
+                    theme={theme}
+                    toggleTheme={toggleTheme}
                 />
                 <Toast
                     message={toast.message}
@@ -229,8 +252,8 @@ function App() {
     // --- Chat principal ---
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 p-4">
-                <div className="max-w-4xl mx-auto h-[calc(100vh-2rem)] flex flex-col shadow-2xl shadow-violet-500/10 rounded-2xl overflow-hidden">
+            <div className="min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 p-2 sm:p-4">
+                <div className="max-w-4xl mx-auto h-[calc(100vh-1rem)] sm:h-[calc(100vh-2rem)] flex flex-col shadow-2xl shadow-violet-500/10 rounded-2xl overflow-hidden">
                     <ChatHeader
                         username={username}
                         isConnected={isConnected}
@@ -238,6 +261,8 @@ function App() {
                         onBackToRooms={handleBackToRooms}
                         onlineUsers={onlineUsers}
                         currentRoom={currentRoom}
+                        theme={theme}
+                        toggleTheme={toggleTheme}
                     />
 
                     {/* Área principal: sidebar de salas + lista de mensagens */}
