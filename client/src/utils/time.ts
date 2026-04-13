@@ -1,6 +1,17 @@
 /**
- * Converte um timestamp para formato relativo (ex: "há 5 minutos", "ontem")
+ * Converte um timestamp para formato relativo em português.
+ *
+ * @param timestamp - Data a converter
+ * @returns String com tempo relativo (ex: "há 5 minutos", "ontem")
+ *
+ * @remarks
  * Similar ao formato usado em Slack, Discord, WhatsApp, etc.
+ * Usa a hora atual do cliente para cálculo.
+ * Usado em MessageItem para exibir tempo de envio abaixo de cada mensagem.
+ *
+ * @example
+ * getRelativeTime(new Date(Date.now() - 5 * 60 * 1000)) // "há 5 minutos"
+ * getRelativeTime(new Date(Date.now() - 1000 * 60 * 60 * 24)) // "ontem"
  */
 export const getRelativeTime = (timestamp: Date): string => {
     const now = new Date()
@@ -51,7 +62,14 @@ export const getRelativeTime = (timestamp: Date): string => {
 }
 
 /**
- * Retorna o horário absoluto para tooltip (ex: "14:30")
+ * Retorna o horário absoluto em formato curto.
+ *
+ * @param timestamp - Data a converter
+ * @returns String com hora (ex: "14:30")
+ *
+ * @remarks
+ * Não usado atualmente, disponível para futuras melhorias na UI.
+ * Localizado para português brasileiro.
  */
 export const getAbsoluteTime = (timestamp: Date): string => {
     return new Date(timestamp).toLocaleTimeString('pt-BR', {
@@ -61,7 +79,18 @@ export const getAbsoluteTime = (timestamp: Date): string => {
 }
 
 /**
- * Retorna data e hora completa para tooltip (ex: "15 Jan 2024, 14:30")
+ * Retorna data e hora completa para exibição em tooltip.
+ *
+ * @param timestamp - Data a converter
+ * @returns String com data e hora (ex: "15 Jan 2024, 14:30")
+ *
+ * @remarks
+ * Usado no title/tooltip do MessageItem para exibir hora precisa ao passar o mouse.
+ * Localizado para português brasileiro.
+ *
+ * @example
+ * getFullDateTime(new Date('2024-01-15T14:30:00'))
+ * // "15 Jan 2024, 14:30"
  */
 export const getFullDateTime = (timestamp: Date): string => {
     return new Date(timestamp).toLocaleString('pt-BR', {

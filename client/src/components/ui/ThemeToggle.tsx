@@ -1,10 +1,30 @@
 import { motion } from 'framer-motion'
 
+/**
+ * Props para o componente ThemeToggle.
+ */
 interface ThemeToggleProps {
+    /** Tema atual ('light' ou 'dark') */
     theme: 'light' | 'dark'
+    /** Callback acionado ao clicar no botão */
     toggleTheme: () => void
 }
 
+/**
+ * Botão para alternar entre modo claro e escuro.
+ *
+ * @param props - {@link ThemeToggleProps}
+ * @returns Botão com ícone de lua/sol
+ *
+ * @remarks
+ * Componente reutilizável presente em LoginScreen, RoomSelectScreen e ChatHeader.
+ * Altera a classe `dark` no `document.documentElement` via callback no pai.
+ * A preferência é persistida em localStorage pelo App.tsx.
+ *
+ * @example
+ * const [theme, setTheme] = useState('light')
+ * <ThemeToggle theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+ */
 export const ThemeToggle = ({ theme, toggleTheme }: ThemeToggleProps) => {
     return (
         <motion.button

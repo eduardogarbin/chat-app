@@ -1,13 +1,40 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect } from 'react'
 
+/**
+ * Props para o componente Toast.
+ */
 interface ToastProps {
+    /** Mensagem a exibir */
     message: string
+    /** Tipo de notificação (define cor e ícone) */
     type: 'success' | 'error' | 'info'
+    /** Se o toast está visível */
     isVisible: boolean
+    /** Callback acionado quando o toast deve ser fechado */
     onClose: () => void
 }
 
+/**
+ * Notificação flutuante no canto superior direito.
+ *
+ * @param props - {@link ToastProps}
+ * @returns Toast animado com ícone, mensagem e botão de fechar
+ *
+ * @remarks
+ * Componente controlado pelo pai (App.tsx).
+ * Auto-fecha em 3 segundos via useEffect.
+ * Animações suaves com Framer Motion (entrada/saída).
+ * Usado para comunicar estados: conexão, erros, sucesso de ações.
+ *
+ * @example
+ * <Toast
+ *   message="Você está online!"
+ *   type="success"
+ *   isVisible={true}
+ *   onClose={() => setVisible(false)}
+ * />
+ */
 export const Toast = ({ message, type, isVisible, onClose }: ToastProps) => {
     useEffect(() => {
         if (isVisible) {

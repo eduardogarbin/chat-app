@@ -7,6 +7,10 @@
  * A escolha por SVG path (ao invés de componentes ou biblioteca externa)
  * mantém zero dependências adicionais e permite renderizar o ícone em
  * qualquer tamanho simplesmente ajustando as classes da tag <svg>.
+ *
+ * @remarks
+ * Os paths são renderizados em RoomSelectScreen, RoomList e ChatHeader.
+ * Cada sala tem um ícone único para melhor identificação visual.
  */
 const ICON_PATHS: Record<string, string> = {
     // ChatBubbleLeftEllipsisIcon — representa conversa geral
@@ -29,6 +33,21 @@ const ICON_PATHS: Record<string, string> = {
 const FALLBACK_PATH =
     'M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z'
 
+/**
+ * Retorna o path SVG de um ícone baseado no ID da sala.
+ *
+ * @param roomId - ID da sala (ex: "geral", "tecnologia")
+ * @returns Path SVG (string com coordenadas de desenho)
+ *
+ * @remarks
+ * Se o roomId não estiver mapeado, retorna um ícone de fallback (ponto de interrogação).
+ * Os paths são strings literais de Heroicons 24/outline (sem viewBox necessário).
+ *
+ * @example
+ * getRoomIconPath('geral')      // ChatBubbleLeftEllipsisIcon
+ * getRoomIconPath('tecnologia') // CodeBracketIcon
+ * getRoomIconPath('unknown')    // Fallback (interrogação)
+ */
 export function getRoomIconPath(roomId: string): string {
     return ICON_PATHS[roomId] ?? FALLBACK_PATH
 }

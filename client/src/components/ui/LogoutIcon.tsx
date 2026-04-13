@@ -1,3 +1,18 @@
+/**
+ * Ícone de logout (seta saindo).
+ *
+ * @returns SVG renderizado com ícone de logout
+ *
+ * @remarks
+ * Usado no botão de sair da aplicação no ChatHeader.
+ * Ícone simples sem props de customização.
+ *
+ * @example
+ * <button>
+ *     <LogoutIcon />
+ *     Sair
+ * </button>
+ */
 export const LogoutIcon = () => {
     return (
         <svg

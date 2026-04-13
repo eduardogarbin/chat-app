@@ -1,9 +1,28 @@
 import { motion } from 'framer-motion'
 
+/**
+ * Props para o componente TypingIndicator.
+ */
 interface TypingIndicatorProps {
+    /** Lista de nomes dos usuários digitando no momento */
     usersTyping: string[]
 }
 
+/**
+ * Indicador animado de usuários digitando.
+ *
+ * @param props - {@link TypingIndicatorProps}
+ * @returns Componente com animação de bolinha ou null (se ninguém está digitando)
+ *
+ * @remarks
+ * Exibido na parte inferior do MessageList quando um ou mais usuários
+ * estão digitando. Anima três bolinhas com efeito wave.
+ * A mensagem adapta-se ao número de usuários (1, 2, ou 3+).
+ *
+ * @example
+ * <TypingIndicator usersTyping={['alice', 'bob']} />
+ * // Exibe: "alice e bob estão digitando"
+ */
 export const TypingIndicator = ({ usersTyping }: TypingIndicatorProps) => {
     if (usersTyping.length === 0) return null
 

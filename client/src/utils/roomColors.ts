@@ -5,13 +5,23 @@
  * a 50–100) para garantir cores visivelmente distintas entre os cards.
  * As classes precisam ser strings literais completas para o Tailwind as
  * detectar durante o scan de arquivos e incluir no bundle final.
+ *
+ * @remarks
+ * Usada em RoomSelectScreen e RoomList para exibição visual distinta
+ * de cada sala. Suporta light e dark mode com prefixo `dark:`.
  */
 export interface RoomPalette {
+    /** Classes Tailwind para gradiente do card */
     card: string
+    /** Classes Tailwind para borda */
     border: string
+    /** Classes Tailwind para sombra no hover */
     shadow: string
+    /** Classes Tailwind para ícone decorativo de fundo */
     hash: string
+    /** Classes Tailwind para cor do título da sala */
     name: string
+    /** Classes Tailwind para cor da descrição */
     desc: string
     /**
      * Cor hex usada em inline styles (ex: o ponto da sala ativa na sidebar).
@@ -87,12 +97,21 @@ const PALETTES: RoomPalette[] = [
 /**
  * Retorna a paleta de cores de uma sala pelo seu índice no array de salas.
  *
+ * @param index - Posição da sala no array (de 0 a N)
+ * @returns Paleta de cores (6 cores disponíveis, cicla em modulo)
+ *
+ * @remarks
  * Usamos o índice (posição no array) em vez de hash pelo roomId porque:
  * - As salas são geradas em ordem fixa no servidor (seedDefaultRooms)
  * - Hash pode causar colisões: roomIds diferentes somam para o mesmo índice
  *   (ex: "aleatório" e "jogos" ambos mapeavam para a paleta violet com o
  *   hash simples de soma de char codes)
  * - Com índice, cada sala sempre recebe uma paleta diferente da anterior
+ *
+ * @example
+ * getRoomPalette(0)  // Violet palette
+ * getRoomPalette(1)  // Sky palette
+ * getRoomPalette(6)  // Violet (cicla)
  */
 export function getRoomPalette(index: number): RoomPalette {
     return PALETTES[index % PALETTES.length] ?? PALETTES[0]!

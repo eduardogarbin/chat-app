@@ -3,12 +3,53 @@ import type { Room } from '../../types/room'
 import { getRoomPalette } from '../../utils/roomColors'
 import { getRoomIconPath } from '../../utils/roomIcons'
 
+/**
+ * Props para o componente RoomList.
+ */
 interface RoomListProps {
+    /** Array de salas disponíveis */
     rooms: Room[]
+    /** Sala atualmente selecionada (afeta highlight) */
     currentRoom: Room | null
+    /** Callback ao clicar em uma sala (troca de sala) */
     onSelectRoom: (room: Room) => void
 }
 
+/**
+ * Sidebar vertical com lista de salas (desktop only).
+ *
+ * @param props - {@link RoomListProps}
+ * @returns Sidebar fixa (hidden em mobile) com botões de sala
+ *
+ * @remarks
+ * Componente exclusivo para desktop (hidden sm:flex).
+ * Exibido ao lado esquerdo do MessageList durante o chat.
+ *
+ * Features:
+ * - Lista scrollável de salas
+ * - Item ativo destacado com fundo e ponto colorido
+ * - Ícone SVG por sala
+ * - Hover effects com transição suave
+ * - Title com descrição da sala (tooltip)
+ * - Ponto colorido animado (layoutId: "activeRoom")
+ * - Truncate de nome se muito longo
+ *
+ * Layout:
+ * - Header: "Salas" (uppercase)
+ * - Conteúdo: flex column com space-y-0.5
+ * - Rodapé: scrollbar customizado
+ *
+ * Responsivo:
+ * - Desktop: 48px de largura fixa
+ * - Mobile: hidden (usar RoomSelectScreen para mudar sala)
+ *
+ * @example
+ * <RoomList
+ *   rooms={[{ id: 'geral', name: 'Geral', description: 'Chat geral' }]}
+ *   currentRoom={{ id: 'geral', name: 'Geral' }}
+ *   onSelectRoom={(room) => handleSwitchRoom(room)}
+ * />
+ */
 export const RoomList = ({ rooms, currentRoom, onSelectRoom }: RoomListProps) => {
     return (
         <div className="hidden sm:flex w-48 flex-shrink-0 bg-white/40 dark:bg-gray-900/30 backdrop-blur-lg border-r border-black/8 dark:border-gray-700/50 flex-col overflow-hidden">

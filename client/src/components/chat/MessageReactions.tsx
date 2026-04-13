@@ -3,26 +3,83 @@ import { useState } from 'react'
 import type { Reaction } from '../../types/message'
 import { EmojiIcon } from '../ui/EmojiIcon'
 
+/**
+ * Props para o componente MessageReactions.
+ */
 interface MessageReactionsProps {
+    /** ID da mensagem a reagir */
     messageId: string
+    /** Lista de reações existentes (se showOnlyButton false) */
     reactions?: Reaction[]
+    /** Socket ID do usuário atual (para verificar se já reagiu) */
     currentUserId: string
+    /** Callback ao adicionar/remover reação (emite para o servidor) */
     onReactionToggle: (messageId: string, emoji: string) => void
+    /** Se true, mostra apenas o botão; se false, mostra reações existentes */
     showOnlyButton?: boolean
+    /** Se a mensagem é do usuário atual (afeta posição do popup) */
     isOwnMessage?: boolean
+    /** Controle externo do popup (do pai) */
     isPopupOpen?: boolean
+    /** Callback para controlar visibilidade do popup (opcional, com fallback local) */
     onTogglePopup?: (isOpen: boolean) => void
 }
 
+/**
+ * Conjunto de reações rápidas (6 emojis mais populares).
+ * Exibidas na popup ao clicar no botão de reação.
+ */
 const QUICK_REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🎉']
 
+/**
+ * Sistema de reações por emoji para mensagens.
+ *
+ * @param props - {@link MessageReactionsProps}
+ * @returns Botão de reação (showOnlyButton) ou lista de reações com contadores
+ *
+ * @remarks
+ * Componente dual-purpose:
+ * 1. Modo "botão": renderiza apenas o ícone de emoji com popup de quick reactions
+ * 2. Modo "reações": renderiza reações existentes com contadores
+ *
+ * Integrado com Socket.io — emit 'toggleReaction' ao clicar.
+ * Suporta estado controlado (pai) ou local (se pai não fornecer onTogglePopup).
+ * Posiciona popup à esquerda/direita baseado em isOwnMessage.
+ *
+ * @example
+ * // Modo botão (no MessageItem)
+ * <MessageReactions
+ *   messageId="msg-123"
+ *   currentUserId="socket-456"
+ *   onReactionToggle={(id, emoji) => socket.emit('toggleReaction', id, emoji)}
+ *   showOnlyButton={true}
+ *   isOwnMessage={true}
+ *   isPopupOpen={openReactionPopup === 'msg-123'}
+ *   onTogglePopup={(isOpen) => setOpenReactionPopup(isOpen ? 'msg-123' : null)}
+ * />
+ *
+ * // Modo reações
+ * <MessageReactions
+ *   messageId="msg-123"
+ *   reactions={[{ emoji: '👍', userIds: ['u1', 'u2'], usernames: ['alice', 'bob'] }]}
+ *   currentUserId="socket-456"
+ *   onReactionToggle={(id, emoji) => socket.emit('toggleReaction', id, emoji)}
+ *   showOnlyButton={false}
+ * />
+ */
 export const MessageReactions = ({ messageId, reactions = [], currentUserId, onReactionToggle, showOnlyButton = false, isOwnMessage = false, isPopupOpen = false, onTogglePopup }: MessageReactionsProps) => {
-    // Usa o estado controlado do pai se disponível, senão usa estado local
+    /**
+     * Fallback para estado local se o pai não fornece controle.
+     * Permite uso independente ou integrado.
+     */
     const [localShowQuickReactions, setLocalShowQuickReactions] = useState(false)
     const showQuickReactions = onTogglePopup ? isPopupOpen : localShowQuickReactions
 
+    /**
+     * Alterna visibilidade do popup de reações rápidas.
+     * Para propagação de eventos para evitar fechar outros popups.
+     */
     const handleToggle = (e?: React.MouseEvent) => {
-        // Evita que o clique propague para o backdrop de outro popup
         e?.stopPropagation()
 
         if (onTogglePopup) {
@@ -32,11 +89,16 @@ export const MessageReactions = ({ messageId, reactions = [], currentUserId, onR
         }
     }
 
+    /**
+     * Verifica se o usuário atual já reagiu com este emoji.
+     * @param reaction - Reação a verificar
+     * @returns true se currentUserId está em reaction.userIds
+     */
     const hasUserReacted = (reaction: Reaction) => {
         return reaction.userIds.includes(currentUserId)
     }
 
-    // Se showOnlyButton é true, mostra apenas o botão
+    /** Modo botão: renderiza apenas o ícone com popup de quick reactions */
     if (showOnlyButton) {
         return (
             <div className="relative z-[25]" data-reaction-popup>

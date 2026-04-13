@@ -2,18 +2,50 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useRef } from 'react'
 import EmojiPickerReact, { Theme } from 'emoji-picker-react'
 
+/**
+ * Props para o componente EmojiPicker.
+ */
 interface EmojiPickerProps {
+    /** Se o picker está aberto */
     isOpen: boolean
+    /** Callback para fechar o picker */
     onClose: () => void
+    /** Callback quando um emoji é selecionado (recebe o emoji string) */
     onEmojiSelect: (emoji: string) => void
 }
 
+/**
+ * Seletor de emoji com suporte a dark mode.
+ *
+ * @param props - {@link EmojiPickerProps}
+ * @returns Modal com EmojiPickerReact ou null (se fechado)
+ *
+ * @remarks
+ * Wrapper do componente `emoji-picker-react` com:
+ * - Detecção automática de dark mode
+ * - Backdrop para fechar ao clicar fora
+ * - Animações suaves de entrada/saída
+ * - Posicionamento acima do input (bottom-full)
+ *
+ * Usado em ChatInput para adicionar emojis ao texto da mensagem.
+ * O emoji inserido é colocado na posição do cursor.
+ *
+ * @example
+ * <EmojiPicker
+ *   isOpen={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   onEmojiSelect={(emoji) => insertEmojiAtCursor(emoji)}
+ * />
+ */
 export const EmojiPicker = ({ isOpen, onClose, onEmojiSelect }: EmojiPickerProps) => {
-    // Detecta se está em dark mode
+    /** Detecta se está em dark mode pela classe do documentElement */
     const isDarkMode = document.documentElement.classList.contains('dark')
     const pickerRef = useRef<HTMLDivElement>(null)
 
-    // Detecta cliques fora do emoji picker
+    /**
+     * Fecha o picker ao clicar fora dele.
+     * O delay evita que o clique de abertura feche imediatamente.
+     */
     useEffect(() => {
         if (!isOpen) return
 

@@ -5,18 +5,62 @@ import { getRoomIconPath } from '../../utils/roomIcons'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import type { Room } from '../../types/room'
 
+/**
+ * Props para o componente ChatHeader.
+ */
 interface ChatHeaderProps {
+    /** Nome do usuário logado */
     username: string
+    /** Se o WebSocket está conectado (afeta cor do indicador) */
     isConnected: boolean
+    /** Callback para logout do usuário */
     onLogout: () => void
+    /** Callback para voltar à seleção de salas */
     onBackToRooms: () => void
+    /** Número de usuários online na sala atual */
     onlineUsers: number
+    /** Sala atual ou null (afeta exibição de nome/ícone) */
     currentRoom: Room | null
+    /** Tema atual ('light' ou 'dark') */
     theme: 'light' | 'dark'
+    /** Callback para alternar tema */
     toggleTheme: () => void
 }
 
+/**
+ * Cabeçalho do chat com informações da sala, usuário e controles.
+ *
+ * @param props - {@link ChatHeaderProps}
+ * @returns Barra fixa no topo com status, botões de ação e avatar do usuário
+ *
+ * @remarks
+ * Layout em 3 seções:
+ * 1. Esquerda: botão voltar + nome da sala com ícone + indicador online
+ * 2. Direita: toggle de tema + avatar com nome + botão logout
+ *
+ * Indicadores visuais:
+ * - Ponto verde/vermelho indica conexão WebSocket
+ * - Ícone da sala muda conforme currentRoom
+ * - Avatar com cor única baseada no username
+ *
+ * Responsivo:
+ * - Desktop: layout horizontal completo
+ * - Mobile: alguns elementos podem ficar empilhados
+ *
+ * @example
+ * <ChatHeader
+ *   username="alice"
+ *   isConnected={true}
+ *   onLogout={() => handleLogout()}
+ *   onBackToRooms={() => handleBackToRooms()}
+ *   onlineUsers={5}
+ *   currentRoom={{ id: 'geral', name: 'Geral' }}
+ *   theme="dark"
+ *   toggleTheme={() => setTheme('light')}
+ * />
+ */
 export const ChatHeader = ({ username, isConnected, onLogout, onBackToRooms, onlineUsers, currentRoom, theme, toggleTheme }: ChatHeaderProps) => {
+    /** Cor única e consistente para o avatar do usuário */
     const userColor = getUserColor(username)
     return (
         <motion.div

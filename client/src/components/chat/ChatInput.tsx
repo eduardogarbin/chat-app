@@ -4,19 +4,60 @@ import type { Socket } from 'socket.io-client'
 import { EmojiPicker } from './EmojiPicker'
 import { EmojiIcon } from '../ui/EmojiIcon'
 
+/**
+ * Props para o componente ChatInput.
+ */
 interface ChatInputProps {
+    /** Texto atual do input */
     inputMessage: string
+    /** Callback para atualizar o texto (setState do App) */
     setInputMessage: (message: string) => void
+    /** Callback acionado ao submeter o formulário */
     onSubmit: (e: React.FormEvent) => void
+    /** Socket.io para emitir eventos de typing */
     socket: Socket | null
 }
 
+/**
+ * Input de mensagem com seletor de emoji integrado.
+ *
+ * @param props - {@link ChatInputProps}
+ * @returns Formulário com input, botão de emoji e botão enviar
+ *
+ * @remarks
+ * Funcionalidades:
+ * 1. Input controlado (valor vem do estado do App)
+ * 2. Indicador de digitação: emite 'typing' ao começar, 'stopTyping' após 3s inativo
+ * 3. Emoji picker: insere emoji na posição do cursor
+ * 4. Validação: previne envio de mensagens vazias (feita no App)
+ *
+ * Timing de typing:
+ * - Emite 'typing' no primeiro caractere
+ * - Resetagem 3s de inatividade → emite 'stopTyping'
+ * - Submit também emite 'stopTyping'
+ *
+ * @example
+ * <ChatInput
+ *   inputMessage={inputMessage}
+ *   setInputMessage={setInputMessage}
+ *   onSubmit={handleSendMessage}
+ *   socket={socket}
+ * />
+ */
 export const ChatInput = ({ inputMessage, setInputMessage, onSubmit, socket }: ChatInputProps) => {
-    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    /** Timer para detectar fim de digitação (3 segundos inativo) */
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    /** Flag para evitar múltiplos 'typing' emit */
     const isTypingRef = useRef(false)
+    /** Referência ao input para manipular cursor e seleção */
     const inputRef = useRef<HTMLInputElement>(null)
+    /** Controla visibilidade do emoji picker */
     const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false)
 
+    /**
+     * Gerencia eventos de digitação com debounce.
+     * Emite 'typing' ao começar, aguarda 3s e emite 'stopTyping'.
+     */
     useEffect(() => {
         if (!socket) return
 
@@ -43,6 +84,10 @@ export const ChatInput = ({ inputMessage, setInputMessage, onSubmit, socket }: C
         }
     }, [inputMessage, socket])
 
+    /**
+     * Submete a mensagem e limpa o estado de digitação.
+     * @param e - Evento do formulário
+     */
     const handleSubmit = (e: React.FormEvent) => {
         if (socket && isTypingRef.current) {
             socket.emit('stopTyping')
@@ -51,6 +96,11 @@ export const ChatInput = ({ inputMessage, setInputMessage, onSubmit, socket }: C
         onSubmit(e)
     }
 
+    /**
+     * Insere emoji na posição do cursor do input.
+     * Mantém o foco e posiciona o cursor após o emoji.
+     * @param emoji - Emoji string a inserir (ex: "👍")
+     */
     const handleEmojiSelect = (emoji: string) => {
         if (!inputRef.current) return
 
@@ -59,11 +109,9 @@ export const ChatInput = ({ inputMessage, setInputMessage, onSubmit, socket }: C
         const end = input.selectionEnd || 0
         const text = inputMessage
 
-        // Insere o emoji na posição do cursor
         const newText = text.substring(0, start) + emoji + text.substring(end)
         setInputMessage(newText)
 
-        // Retorna o foco para o input e posiciona o cursor após o emoji
         setTimeout(() => {
             input.focus()
             const newCursorPosition = start + emoji.length

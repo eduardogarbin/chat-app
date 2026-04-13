@@ -1,11 +1,36 @@
 import { motion, AnimatePresence } from 'framer-motion'
 
+/**
+ * Props para o componente ScrollToBottom.
+ */
 interface ScrollToBottomProps {
+    /** Se o botão deve estar visível */
     isVisible: boolean
+    /** Quantidade de mensagens não lidas desde o último scroll */
     unreadCount: number
+    /** Callback acionado ao clicar (scroll suave para o fundo) */
     onClick: () => void
 }
 
+/**
+ * Botão flutuante para voltar ao fim da conversa.
+ *
+ * @param props - {@link ScrollToBottomProps}
+ * @returns Botão com badge de contagem ou null (se não visível)
+ *
+ * @remarks
+ * Exibido apenas quando o usuário rola a lista de mensagens para cima
+ * e novas mensagens chegam. Mostra um badge com o número de mensagens
+ * não lidas (máximo 99+). Usa scroll suave ao clicar.
+ * Controlado inteiramente pelo estado do MessageList.
+ *
+ * @example
+ * <ScrollToBottom
+ *   isVisible={true}
+ *   unreadCount={3}
+ *   onClick={() => scrollToBottom()}
+ * />
+ */
 export const ScrollToBottom = ({ isVisible, unreadCount, onClick }: ScrollToBottomProps) => {
     return (
         <AnimatePresence>

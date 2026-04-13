@@ -4,16 +4,59 @@ import { getRoomPalette } from '../../utils/roomColors'
 import { getRoomIconPath } from '../../utils/roomIcons'
 import { ThemeToggle } from '../ui/ThemeToggle'
 
+/**
+ * Props para o componente RoomSelectScreen.
+ */
 interface RoomSelectScreenProps {
+    /** Nome do usuário (exibido no header) */
     username: string
+    /** Array de salas disponíveis para seleção */
     rooms: Room[]
+    /** Callback ao clicar em uma sala (entra no chat) */
     onSelectRoom: (room: Room) => void
+    /** Callback para voltar à entrada de nome */
     onBack: () => void
+    /** Tema atual ('light' ou 'dark') */
     theme: 'light' | 'dark'
+    /** Callback para alternar tema */
     toggleTheme: () => void
 }
 
+/**
+ * Segunda tela de login: seleção de sala de chat.
+ *
+ * @param props - {@link RoomSelectScreenProps}
+ * @returns Tela full-screen com grid de salas e botão voltar
+ *
+ * @remarks
+ * Parte 2 do fluxo de login em 2 etapas (LoginScreen → aqui).
+ *
+ * Features:
+ * - Grid responsivo: 2 colunas (desktop), 1 coluna (mobile)
+ * - Cards de sala com paletas de cores únicas
+ * - Ícone SVG por sala (getRoomIconPath)
+ * - Staggered animation de entrada
+ * - Hover effects com scale + lift
+ * - Última sala (número ímpar) é centralizada
+ * - Button "voltar" para mudar nome
+ * - Display do nome entrando
+ *
+ * Integração Socket.io:
+ * - Salas carregadas do servidor via 'roomsList' event
+ * - Mostrar "Carregando salas..." se rooms.length === 0
+ *
+ * @example
+ * <RoomSelectScreen
+ *   username="alice"
+ *   rooms={[{ id: 'geral', name: 'Geral', description: 'Chat geral' }]}
+ *   onSelectRoom={(room) => handleJoinRoom(room)}
+ *   onBack={() => setLoginStep('username')}
+ *   theme="dark"
+ *   toggleTheme={() => setTheme('light')}
+ * />
+ */
 export const RoomSelectScreen = ({ username, rooms, onSelectRoom, onBack, theme, toggleTheme }: RoomSelectScreenProps) => {
+    /** Detecta se a contagem de salas é ímpar (para centralizar a última) */
     const isOddCount = rooms.length % 2 !== 0
 
     return (

@@ -1,12 +1,27 @@
+/**
+ * Resultado da função de cor de usuário.
+ */
 interface UserColor {
+    /** Cor de fundo hexadecimal */
     bg: string
+    /** Cor do texto (contraste garantido) */
     textColor: string
 }
 
 /**
- * Retorna uma cor consistente para um usuário baseada no seu nome
- * Utiliza uma paleta de 16 cores vibrantes e modernas
- * A mesma cor sempre será atribuída ao mesmo nome de usuário
+ * Retorna uma cor consistente para um usuário baseada no seu nome.
+ *
+ * @param username - Nome do usuário
+ * @returns Objeto com cor de fundo e cor de texto
+ *
+ * @remarks
+ * Usa hash determinístico baseado na soma dos char codes do nome.
+ * A mesma cor é sempre retornada para o mesmo username.
+ * Paleta de 16 cores vibrantes para máximo contraste.
+ *
+ * @example
+ * const color = getUserColor('alice')
+ * // { bg: '#8b5cf6', textColor: '#ffffff' }
  */
 export const getUserColor = (username: string): UserColor => {
     const colors: UserColor[] = [

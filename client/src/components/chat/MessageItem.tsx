@@ -5,25 +5,68 @@ import { getUserColor } from '../../utils/colors'
 import { getRelativeTime, getFullDateTime } from '../../utils/time'
 import { MessageReactions } from './MessageReactions'
 
+/**
+ * Props para o componente MessageItem.
+ */
 interface MessageItemProps {
+    /** Objeto de mensagem com conteúdo, timestamp, reações */
     message: Message
+    /** Se a mensagem é do usuário atual (alinha à direita) */
     isOwnMessage: boolean
+    /** Socket ID do usuário atual (para comparações) */
     currentUserId: string
+    /** Callback ao adicionar/remover reação (emite para servidor) */
     onReactionToggle: (messageId: string, emoji: string) => void
+    /** ID do popup aberto (controlado pelo MessageList pai) */
     openReactionPopup: string | null
+    /** Callback para abrir/fechar popup de reações */
     setOpenReactionPopup: (messageId: string | null) => void
 }
 
+/**
+ * Item individual de mensagem renderizado no chat.
+ *
+ * @param props - {@link MessageItemProps}
+ * @returns Mensagem animada com avatar, conteúdo, timestamp e reações
+ *
+ * @remarks
+ * Renderiza dois tipos de mensagens:
+ * 1. Mensagens do sistema (userId === 'system'): layout centralizado, sem avatar
+ * 2. Mensagens de usuário: layout normal, com avatar, alinhamento L/R, reações
+ *
+ * Integração com servidor:
+ * - Timestamps são do lado do servidor para sincronização
+ * - Reações são rastreadas via Socket.io
+ * - Tempo relativo ("há 5 minutos") atualiza a cada minuto
+ *
+ * Layout responsivo:
+ * - Mensagens próprias: alinhadas à direita, fundo violeta
+ * - Mensagens de outros: alinhadas à esquerda, fundo claro
+ * - Avatar com cor única por usuário
+ *
+ * @example
+ * <MessageItem
+ *   message={{ id: 'm1', userId: 'alice', username: 'Alice', content: 'Oi!', timestamp: new Date() }}
+ *   isOwnMessage={false}
+ *   currentUserId="bob"
+ *   onReactionToggle={(id, emoji) => socket.emit('toggleReaction', id, emoji)}
+ *   openReactionPopup={null}
+ *   setOpenReactionPopup={() => {}}
+ * />
+ */
 export const MessageItem = ({ message, isOwnMessage, currentUserId, onReactionToggle, openReactionPopup, setOpenReactionPopup }: MessageItemProps) => {
     const isSystemMessage = message.userId === 'system'
     const userColor = getUserColor(message.username)
     const [relativeTime, setRelativeTime] = useState(getRelativeTime(message.timestamp))
 
-    // Atualiza o tempo relativo a cada minuto
+    /**
+     * Atualiza o tempo relativo a cada minuto.
+     * Necessário para manter "há 5 minutos" preciso sem re-renderização contínua.
+     */
     useEffect(() => {
         const interval = setInterval(() => {
             setRelativeTime(getRelativeTime(message.timestamp))
-        }, 60000) // Atualiza a cada 60 segundos
+        }, 60000)
 
         return () => clearInterval(interval)
     }, [message.timestamp])

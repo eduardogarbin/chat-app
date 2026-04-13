@@ -1,14 +1,54 @@
 import { motion } from 'framer-motion'
 import { ThemeToggle } from '../ui/ThemeToggle'
 
+/**
+ * Props para o componente LoginScreen.
+ */
 interface LoginScreenProps {
+    /** Nome de usuário atual (valor do input) */
     username: string
+    /** Callback para atualizar o nome (setState do App) */
     setUsername: (username: string) => void
+    /** Callback ao submeter o formulário (avança para seleção de sala) */
     onSubmit: (e: React.FormEvent) => void
+    /** Tema atual ('light' ou 'dark') */
     theme: 'light' | 'dark'
+    /** Callback para alternar tema */
     toggleTheme: () => void
 }
 
+/**
+ * Primeira tela de login: entrada de nome de usuário.
+ *
+ * @param props - {@link LoginScreenProps}
+ * @returns Tela full-screen com formulário de entrada de nome
+ *
+ * @remarks
+ * Parte 1 do fluxo de login em 2 etapas:
+ * 1. LoginScreen (aqui) - entrada de nome
+ * 2. RoomSelectScreen - seleção de sala
+ *
+ * Features:
+ * - Input controlado (valor vem do estado do App)
+ * - Validação mínima (feita no App.tsx)
+ * - Theme toggle no canto superior direito
+ * - Logo LoroChat com mascote (parrot-icon.png)
+ * - Animação suave de entrada
+ * - Input com auto-focus
+ *
+ * Responsivo:
+ * - Desktop: card centralizado com max-width
+ * - Mobile: padding reduzido, adapta à tela
+ *
+ * @example
+ * <LoginScreen
+ *   username={username}
+ *   setUsername={setUsername}
+ *   onSubmit={handleSetUsername}
+ *   theme="dark"
+ *   toggleTheme={() => setTheme('light')}
+ * />
+ */
 export const LoginScreen = ({ username, setUsername, onSubmit, theme, toggleTheme }: LoginScreenProps) => {
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-violet-100 via-pink-50 to-blue-100 dark:from-gray-900 dark:via-violet-950 dark:to-gray-900 flex items-center justify-center p-4">
